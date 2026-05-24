@@ -1,0 +1,85 @@
+{
+  "auth_credentials": {
+    "valid": {
+      "username": "admin",
+      "password": "password123"
+    },
+    "invalid": {
+      "username": "invaliduser",
+      "password": "wrongpassword"
+    }
+  },
+  "bookings": {
+    "valid_booking_1": {
+      "firstname": "John",
+      "lastname": "Doe",
+      "totalprice": 111,
+      "depositpaid": true,
+      "checkin": "2026-01-01",
+      "checkout": "2026-01-10",
+      "additionalneeds": "Breakfast"
+    },
+    "valid_booking_2": {
+      "firstname": "Jane",
+      "lastname": "Smith",
+      "totalprice": 250,
+      "depositpaid": false,
+      "checkin": "2026-02-15",
+      "checkout": "2026-02-20",
+      "additionalneeds": "Late checkout"
+    },
+    "valid_booking_boundary_min": {
+      "firstname": "A",
+      "lastname": "B",
+      "totalprice": 0,
+      "depositpaid": true,
+      "checkin": "2026-01-01",
+      "checkout": "2026-01-02",
+      "additionalneeds": ""
+    },
+    "valid_booking_boundary_max": {
+      "firstname": "VeryLongFirstNameForTesting",
+      "lastname": "VeryLongLastNameForTesting",
+      "totalprice": 999999,
+      "depositpaid": true,
+      "checkin": "2025-01-01",
+      "checkout": "2026-12-31",
+      "additionalneeds": "Premium service with all amenities"
+    },
+    "invalid_booking_missing_firstname": {
+      "lastname": "Doe",
+      "totalprice": 111,
+      "depositpaid": true,
+      "checkin": "2026-01-01",
+      "checkout": "2026-01-10",
+      "additionalneeds": "Breakfast"
+    },
+    "invalid_booking_invalid_totalprice_type": {
+      "firstname": "John",
+      "lastname": "Doe",
+      "totalprice": "not_a_number",
+      "depositpaid": true,
+      "checkin": "2026-01-01",
+      "checkout": "2026-01-10",
+      "additionalneeds": "Breakfast"
+    },
+    "invalid_booking_invalid_dates": {
+      "firstname": "John",
+      "lastname": "Doe",
+      "totalprice": 111,
+      "depositpaid": true,
+      "checkin": "2026-01-10",
+      "checkout": "2026-01-01",
+      "additionalneeds": "Breakfast"
+    }
+  },
+  "invalid_booking_id": 999999,
+  "test_expectations": {
+    "successful_booking_status": 200,
+    "created_booking_status": 201,
+    "bad_request_status": 400,
+    "unauthorized_status": 401,
+    "forbidden_status": 403,
+    "not_found_status": 404
+  }
+}

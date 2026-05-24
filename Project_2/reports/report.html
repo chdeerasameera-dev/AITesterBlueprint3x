@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RESTful Booker API - Test Execution Report</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .metric {
+            background-color: white;
+            padding: 20px;
+            border-radius: 6px;
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+        
+        .metric.passed {
+            border-left-color: #28a745;
+        }
+        
+        .metric.failed {
+            border-left-color: #dc3545;
+        }
+        
+        .metric.total {
+            border-left-color: #667eea;
+        }
+        
+        .metric-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+            margin: 10px 0;
+        }
+        
+        .metric-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .results-section {
+            padding: 30px;
+        }
+        
+        .results-section h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .test-result {
+            margin-bottom: 15px;
+            padding: 15px;
+            border-left: 4px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            transition: all 0.3s ease;
+        }
+        
+        .test-result.passed {
+            border-left-color: #28a745;
+            background-color: #f1f9f1;
+        }
+        
+        .test-result.failed {
+            border-left-color: #dc3545;
+            background-color: #f9f1f1;
+        }
+        
+        .test-result-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .test-result-name {
+            font-weight: 600;
+            font-size: 14px;
+            flex: 1;
+        }
+        
+        .test-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .test-status.passed {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .test-status.failed {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .test-details {
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+        }
+        
+        .test-details div {
+            margin: 5px 0;
+        }
+        
+        .test-details .label {
+            display: inline-block;
+            min-width: 100px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8d7da;
+            border-radius: 4px;
+            border-left: 3px solid #dc3545;
+        }
+        
+        footer {
+            background-color: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+            border-radius: 4px;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 20px;
+            }
+            
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .test-result-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>RESTful Booker API - Test Execution Report</h1>
+            <p>Generated on 2026-05-24 17:43:27</p>
+        </header>
+        
+        <div class="metrics">
+            <div class="metric total">
+                <div class="metric-label">Total Tests</div>
+                <div class="metric-value">10</div>
+            </div>
+            <div class="metric passed">
+                <div class="metric-label">Tests Passed</div>
+                <div class="metric-value">7</div>
+            </div>
+            <div class="metric failed">
+                <div class="metric-label">Tests Failed</div>
+                <div class="metric-value">3</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">Pass Rate</div>
+                <div class="metric-value">70.0%</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 70.0%"></div>
+                </div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">Total Duration</div>
+                <div class="metric-value">6.22s</div>
+            </div>
+        </div>
+        
+        <div class="results-section">
+            <h2>Test Results</h2>
+            <div class="test-result pass">
+                <div class="test-result-header">
+                    <span class="test-result-name">TC_001: Create booking with valid data</span>
+                    <span class="test-status pass">Pass</span>
+                </div>
+                <div class="test-details">
+                    <div><span class="label">Duration:</span> 2.4s</div>
+                    <div><span class="label">Result:</span> Booking created with ID: 1364</div>
+                </div>
+            </div>
+            <div class="test-result fail">
+                <div class="test-result-header">
+                    <span class="test-result-name">TC_002: Create booking with missing required fields</span>
+                    <span class="test-status fail">Fail</span>
+                </div>
+                <div class="test-details">
+                    <div><span class="label">Duration:</span> 0.25s</div>
+                    <div><span class="label">Result:</span> Status: 500</div>
+                    <div class="error-message"><strong>Error:</strong> Expected 400, got 500</div>
+                </div>
+            </div>
+            <div class="test-result fail">
+                <div class="test-result-header">
+                    <span class="test-result-name">TC_003: Create booking with invalid data type</span>
+                    <span class="test-status fail">Fail</span>
+                </div>
+                <div class="test-details">
+                    <div><span class="label">Duration:</span> 0.25s</div>
+                    <div><span class="label">Result:</span> Status: 200</div>
+                    <div class="error-message"><strong>Error:</strong> Expected 400, got 200</div>
+                </div>
+            </div>
+            <div class="test-result pass">
+                <div class="test-result-header">
+                    <span class="test-result-name">TC_004: Retrieve booking by valid booking ID</span>
+                    <span class="test-status pass">Pass</span>
+                </div>
+                <div class="test-details">
+                    <div><span class="label">Duration:</span> 0.51s</div>
+                    <div><span class="label">Result:</span> Status: 200</div>
+                </div>
+            </div>
+            <div class="test-result pass">
+                <div class="test-result-header">
+                    <span class="test-result-name">TC_005: Retrieve booking with invalid booking ID</span>
+                    <span class="test-status pass">Pass</span>
+                </div>
+                <div class="test-details">
+                    <div><span class="label">Duration:</span> 0.26s</div>
+                    <div><span class="label">Result:</span> Status: 404</div>
+                </div>
+            </div>
+            <div class="test-result pass">
+                <div class="test-result-header">
+                    <span class="test-result-name">TC_006: Update booking with valid data and authentication token</span>
+                    <span class="test-status pass">Pass</span>
+                </div>
+                <div class="test-details">
+                    <div><span class="label">Duration:</span> 0.78s</div>
+                    <div><span class="label">Result:</span> Status: 200</div>
+                </div>
+            </div>
+            <div class="test-result pass">
+                <div class="test-result-header">
+                    <span class="test-result-name">TC_007: Update booking without authentication token</span>
+                    <span class="test-status pass">Pass</span>
+                </div>
+                <div class="test-details">
+                    <div><span class="label">Duration:</span> 0.51s</div>
+                    <div><span class="label">Result:</span> Status: 403</div>
+                </div>
+            </div>
+            <div class="test-result pass">
+                <div class="test-result-header">
+                    <span class="test-result-name">TC_008: Delete booking with valid authentication token</span>
+                    <span class="test-status pass">Pass</span>
+                </div>
+                <div class="test-details">
+                    <div><span class="label">Duration:</span> 0.76s</div>
+                    <div><span class="label">Result:</span> Status: 201</div>
+                </div>
+            </div>
+            <div class="test-result pass">
+                <div class="test-result-header">
+                    <span class="test-result-name">TC_009: Generate authentication token with valid credentials</span>
+                    <span class="test-status pass">Pass</span>
+                </div>
+                <div class="test-details">
+                    <div><span class="label">Duration:</span> 0.25s</div>
+                    <div><span class="label">Result:</span> Status: 200</div>
+                </div>
+            </div>
+            <div class="test-result fail">
+                <div class="test-result-header">
+                    <span class="test-result-name">TC_010: Generate authentication token with invalid credentials</span>
+                    <span class="test-status fail">Fail</span>
+                </div>
+                <div class="test-details">
+                    <div><span class="label">Duration:</span> 0.25s</div>
+                    <div><span class="label">Result:</span> Status: 200</div>
+                    <div class="error-message"><strong>Error:</strong> Expected 401, got 200</div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>This report was generated by the Keyword-Driven Automation Framework for RESTful Booker API</p>
+            <p>Framework: Python + Requests | Test Data: Externalized JSON | Report Type: HTML</p>
+        </footer>
+    </div>
+</body>
+</html>
