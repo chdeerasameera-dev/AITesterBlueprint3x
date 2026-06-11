@@ -1,27 +1,10 @@
 {
   "version": 2,
-  "name": "teststrategygeneratorbuddy",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "framework": null,
-  "functions": {
-    "api/*.js": {
-      "runtime": "@vercel/node@3"
-    }
-  },
-  "routes": [
-    {
-      "src": "/api/health",
-      "dest": "/api/health.js"
-    },
-    {
-      "src": "/api/generate",
-      "dest": "/api/generate.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/dist/$1"
-    }
-  ],
-  "env": {}
+  "rewrites": [
+    { "source": "/api/health",   "destination": "/api/health.js"   },
+    { "source": "/api/generate", "destination": "/api/generate.js" },
+    { "source": "/(.*)",         "destination": "/$1"              }
+  ]
 }
