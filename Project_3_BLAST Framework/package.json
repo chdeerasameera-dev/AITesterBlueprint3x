@@ -1,0 +1,40 @@
+{
+  "name": "testingbuddy",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Jira → AI-Powered QA Document Generator | Testing Buddy",
+  "main": "server.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "server": "node server.js",
+    "start": "node server.js",
+    "handshake": "node tools/handshake.js",
+    "all": "npm run build && npm run server"
+  },
+  "keywords": [
+    "jira",
+    "test-plan",
+    "qa",
+    "automation",
+    "blast",
+    "groq",
+    "llm"
+  ],
+  "author": "Test Automation Blueprint",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.0",
+    "vite": "^4.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

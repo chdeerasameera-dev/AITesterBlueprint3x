@@ -1,0 +1,32 @@
+{
+  "version": 2,
+  "name": "teststrategygeneratorbuddy",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": null,
+  "functions": {
+    "api/*.js": {
+      "runtime": "@vercel/node@3"
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/health",
+      "dest": "/api/health.js"
+    },
+    {
+      "src": "/api/generate",
+      "dest": "/api/generate.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/dist/$1"
+    }
+  ],
+  "env": {
+    "GROQ_KEY":       "@groq_key",
+    "JIRA_EMAIL":     "@jira_email",
+    "JIRA_API_TOKEN": "@jira_api_token",
+    "JIRA_URL":       "@jira_url"
+  }
+}

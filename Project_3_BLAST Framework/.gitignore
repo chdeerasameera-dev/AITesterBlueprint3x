@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Environment — never commit real credentials
+.env
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+*.log
+
+# Temp files
+.tmp/
+*.tmp
+
+# Vite cache
+.vite/
+
+# NOTE: dist/ is intentionally NOT ignored
+# Vercel needs the pre-built frontend committed to the repo
