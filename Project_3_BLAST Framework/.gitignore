@@ -3,6 +3,8 @@ node_modules/
 
 # Environment — never commit real credentials
 .env
+.env.local
+.env.*.local
 
 # OS / editor
 .DS_Store
@@ -16,6 +18,9 @@ Thumbs.db
 
 # Vite cache
 .vite/
+
+# Build cache
+.cache/
 
 # NOTE: dist/ is intentionally NOT ignored
 # Vercel needs the pre-built frontend committed to the repo
