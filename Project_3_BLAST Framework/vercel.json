@@ -23,10 +23,5 @@
       "dest": "/dist/$1"
     }
   ],
-  "env": {
-    "GROQ_KEY":       "@groq_key",
-    "JIRA_EMAIL":     "@jira_email",
-    "JIRA_API_TOKEN": "@jira_api_token",
-    "JIRA_URL":       "@jira_url"
-  }
+  "env": {}
 }
