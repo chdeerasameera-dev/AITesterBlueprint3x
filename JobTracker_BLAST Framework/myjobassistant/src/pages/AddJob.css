@@ -1,0 +1,46 @@
+/* AddJob page styles */
+.addjob-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.addjob-header-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--ocean-bright), var(--ocean-wave));
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(46,191,165,0.35);
+}
+
+.addjob-title {
+  color: var(--ocean-deep);
+  font-size: 1.75rem;
+  font-weight: 800;
+}
+
+.addjob-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+}
+
+.req-star {
+  color: var(--danger-red);
+  font-weight: 700;
+}
+
+.addjob-card {
+  padding: 2rem;
+}
+
+@media (max-width: 640px) {
+  .addjob-card { padding: 1.25rem; }
+  .addjob-title { font-size: 1.35rem; }
+}

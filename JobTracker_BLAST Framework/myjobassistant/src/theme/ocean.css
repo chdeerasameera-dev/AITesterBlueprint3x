@@ -1,0 +1,545 @@
+/* ============================================================
+   Ocean Theme Design Tokens — MyJobAssistant
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* Ocean Color Palette */
+  --ocean-deep:       #0A2342;  /* Primary dark navy */
+  --ocean-mid:        #1A6B8A;  /* Deep teal (nav/header) */
+  --ocean-bright:     #2EBFA5;  /* Seafoam accent (CTAs) */
+  --ocean-foam:       #D0F0EB;  /* Light seafoam (tile bg) */
+  --ocean-sky:        #E8F4FD;  /* Sky blue (page bg) */
+  --ocean-wave:       #3AAFA9;  /* Wave teal (borders) */
+  --ocean-coral:      #E07B54;  /* Warm coral (warning/alert) */
+
+  /* Text Colors */
+  --text-primary:     #0A2342;
+  --text-secondary:   #4A7B9D;
+  --text-muted:       #7EB8C9;
+  --text-on-dark:     #E8F4FD;
+
+  /* Status Colors */
+  --success-green:    #38A169;
+  --danger-red:       #E53E3E;
+  --warning-amber:    #D69E2E;
+  --info-blue:        #3182CE;
+  --white:            #FFFFFF;
+
+  /* Shadows */
+  --shadow-sm:        0 2px 8px rgba(10,35,66,0.10);
+  --shadow-md:        0 4px 20px rgba(10,35,66,0.15);
+  --shadow-lg:        0 8px 40px rgba(10,35,66,0.20);
+
+  /* Border Radius */
+  --radius-tile:      14px;
+  --radius-btn:       8px;
+  --radius-input:     8px;
+  --radius-modal:     16px;
+
+  /* Transitions */
+  --transition-fast:  0.15s ease;
+  --transition-base:  0.25s ease;
+  --transition-slow:  0.40s ease;
+
+  /* Spacing */
+  --page-padding:     2rem;
+  --nav-height:       64px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--ocean-sky);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============ Utility Classes ============ */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--page-padding);
+}
+
+.page-wrapper {
+  min-height: calc(100vh - var(--nav-height));
+  padding: 2rem var(--page-padding);
+}
+
+/* ============ Typography ============ */
+h1 { font-size: 2rem; font-weight: 800; }
+h2 { font-size: 1.5rem; font-weight: 700; }
+h3 { font-size: 1.25rem; font-weight: 600; }
+h4 { font-size: 1rem; font-weight: 600; }
+
+/* ============ Buttons ============ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.4rem;
+  border: none;
+  border-radius: var(--radius-btn);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--ocean-bright), var(--ocean-wave));
+  color: var(--white);
+  box-shadow: 0 4px 12px rgba(46,191,165,0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(46,191,165,0.4);
+}
+
+.btn-secondary {
+  background: var(--ocean-foam);
+  color: var(--ocean-mid);
+  border: 1.5px solid var(--ocean-wave);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--ocean-wave);
+  color: var(--white);
+}
+
+.btn-danger {
+  background: var(--danger-red);
+  color: var(--white);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #c53030;
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1.5px solid transparent;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--ocean-foam);
+  border-color: var(--ocean-wave);
+}
+
+/* ============ Form Elements ============ */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.form-label .required {
+  color: var(--danger-red);
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 1.5px solid #c8dae8;
+  border-radius: var(--radius-input);
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  background: var(--white);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  outline: none;
+}
+
+.form-control:focus {
+  border-color: var(--ocean-bright);
+  box-shadow: 0 0 0 3px rgba(46,191,165,0.15);
+}
+
+.form-control.error {
+  border-color: var(--danger-red);
+  box-shadow: 0 0 0 3px rgba(229,62,62,0.10);
+}
+
+.form-error {
+  font-size: 0.8rem;
+  color: var(--danger-red);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.char-counter {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: 0.15rem;
+}
+
+.char-counter.over-limit {
+  color: var(--danger-red);
+  font-weight: 600;
+}
+
+/* ============ Cards ============ */
+.card {
+  background: var(--white);
+  border-radius: var(--radius-tile);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(58,175,169,0.12);
+  transition: box-shadow var(--transition-base);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* ============ Badges ============ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.badge-applied   { background: #EBF8FF; color: #2B6CB0; }
+.badge-selected  { background: #F0FFF4; color: #276749; }
+.badge-rejected  { background: #FFF5F5; color: #C53030; }
+.badge-progress  { background: #FFFFF0; color: #744210; }
+
+/* ============ Animations ============ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse-ring {
+  0%   { transform: scale(1); opacity: 0.7; }
+  50%  { transform: scale(1.05); opacity: 0.4; }
+  100% { transform: scale(1); opacity: 0.7; }
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(100%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(100%); }
+}
+
+.animate-fadeInUp { animation: fadeInUp 0.4s ease both; }
+.animate-fadeIn   { animation: fadeIn 0.3s ease both; }
+
+/* ============ Scrollbar ============ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--ocean-sky); }
+::-webkit-scrollbar-thumb { background: var(--ocean-wave); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ocean-mid); }
+
+/* ============ Responsive ============ */
+@media (max-width: 768px) {
+  :root { --page-padding: 1rem; }
+  h1 { font-size: 1.6rem; }
+  h2 { font-size: 1.25rem; }
+  .page-wrapper { padding: 1.25rem var(--page-padding); }
+}
+
+/* ============================================================
+   🌙 DARK THEME — Deep Ocean Night
+   Deep Space Navy-Black + Vibrant Ocean Teal
+   ============================================================ */
+
+[data-theme="dark"] {
+  /* Page & surface backgrounds */
+  --ocean-sky:      #0A0F1A;   /* near-black page bg */
+  --ocean-foam:     #131C2E;   /* inner section bg */
+  --white:          #131C2E;   /* surface — cards, inputs */
+
+  /* Text */
+  --text-primary:   #D0E8F5;
+  --text-secondary: #7EB8D4;
+  --text-muted:     #4A7B9D;
+
+  /* Shadows become deeper */
+  --shadow-sm:  0 2px 8px rgba(0,0,0,0.55);
+  --shadow-md:  0 4px 20px rgba(0,0,0,0.7);
+  --shadow-lg:  0 8px 40px rgba(0,0,0,0.8);
+
+  /* Ocean accents STAY vibrant — they pop on dark */
+  color-scheme: dark;
+}
+
+/* ── Body & Page ── */
+[data-theme="dark"] body {
+  background-color: #0A0F1A;
+  color: #D0E8F5;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track { background: #0A0F1A; }
+
+/* ── Navbar ── */
+[data-theme="dark"] .navbar {
+  background: linear-gradient(135deg, #050810 0%, #0D1B2E 100%);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.6);
+  border-bottom: 1px solid rgba(46,191,165,0.15);
+}
+
+/* ── Cards ── */
+[data-theme="dark"] .card {
+  background: #131C2E;
+  border-color: rgba(46,191,165,0.18);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+}
+
+[data-theme="dark"] .card:hover {
+  box-shadow: 0 6px 24px rgba(0,0,0,0.65);
+  border-color: rgba(46,191,165,0.3);
+}
+
+/* ── Metric Tiles ── */
+[data-theme="dark"] .metric-tile {
+  background: #131C2E;
+  border-color: rgba(46,191,165,0.15);
+}
+
+[data-theme="dark"] .metric-tile--clickable:hover {
+  background: #1A2540;
+  border-color: var(--tile-colour, var(--ocean-bright));
+  box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+}
+
+/* ── Form Controls ── */
+[data-theme="dark"] .form-control {
+  background: #0A0F1A;
+  border-color: #1E3A5F;
+  color: #D0E8F5;
+}
+
+[data-theme="dark"] .form-control:focus {
+  border-color: var(--ocean-bright);
+  box-shadow: 0 0 0 3px rgba(46,191,165,0.2);
+}
+
+[data-theme="dark"] .form-control::placeholder {
+  color: #4A7B9D;
+}
+
+[data-theme="dark"] select.form-control option {
+  background: #131C2E;
+  color: #D0E8F5;
+}
+
+/* ── Buttons ── */
+[data-theme="dark"] .btn-primary {
+  color: #FFFFFF;
+}
+
+[data-theme="dark"] .btn-secondary {
+  background: #1A2540;
+  color: var(--ocean-bright);
+  border-color: rgba(46,191,165,0.4);
+}
+
+[data-theme="dark"] .btn-secondary:hover:not(:disabled) {
+  background: var(--ocean-wave);
+  color: #fff;
+}
+
+[data-theme="dark"] .btn-ghost {
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .btn-ghost:hover:not(:disabled) {
+  background: rgba(46,191,165,0.1);
+  border-color: rgba(46,191,165,0.3);
+}
+
+/* ── Badges (status) ── */
+[data-theme="dark"] .badge-applied   { background: rgba(49,130,206,0.15); color: #63B3ED; }
+[data-theme="dark"] .badge-selected  { background: rgba(56,161,105,0.15); color: #68D391; }
+[data-theme="dark"] .badge-rejected  { background: rgba(229,62,62,0.15);  color: #FC8181; }
+[data-theme="dark"] .badge-progress  { background: rgba(214,158,46,0.15); color: #F6AD55; }
+
+/* ── Dashboard ── */
+[data-theme="dark"] .dashboard-title { color: #D0E8F5; }
+[data-theme="dark"] .window-badge    { background: rgba(46,191,165,0.15); border: 1px solid rgba(46,191,165,0.3); color: var(--ocean-bright); }
+[data-theme="dark"] .speedometer-card-title { color: #D0E8F5; }
+[data-theme="dark"] .speedometer-stats { border-top-color: rgba(46,191,165,0.15); }
+[data-theme="dark"] .stat-divider    { background: rgba(46,191,165,0.15); }
+[data-theme="dark"] .speedometer-range-legend { border-top-color: rgba(46,191,165,0.1); }
+
+/* ── Job List Table ── */
+[data-theme="dark"] .joblist-table { background: #131C2E; }
+
+[data-theme="dark"] .joblist-table thead {
+  background: linear-gradient(135deg, #050810 0%, #0D1B2E 100%);
+}
+
+[data-theme="dark"] .joblist-table td {
+  border-bottom-color: rgba(46,191,165,0.08);
+  color: #D0E8F5;
+}
+
+[data-theme="dark"] .joblist-row:hover { background: #1A2540; }
+[data-theme="dark"] .joblist-table-wrap { box-shadow: 0 2px 12px rgba(0,0,0,0.5); }
+
+[data-theme="dark"] .search-box .search-icon { color: #4A7B9D; }
+
+[data-theme="dark"] .view-btn  { background: rgba(46,191,165,0.12); color: var(--ocean-bright); }
+[data-theme="dark"] .view-btn:hover  { background: var(--ocean-wave); color: #fff; }
+[data-theme="dark"] .delete-btn { background: rgba(229,62,62,0.12); }
+
+/* ── Insights Modal ── */
+[data-theme="dark"] .insights-modal { background: #131C2E; }
+
+[data-theme="dark"] .insights-jobs-section {
+  background: #0D1421;
+  border-right-color: rgba(46,191,165,0.12);
+}
+
+[data-theme="dark"] .insights-job-card {
+  background: #131C2E;
+  border-color: rgba(46,191,165,0.15);
+}
+
+[data-theme="dark"] .insights-job-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.4); }
+
+[data-theme="dark"] .ijc-company { color: var(--ocean-bright); }
+
+[data-theme="dark"] .ijc-interview,
+[data-theme="dark"] .ijc-questions { background: rgba(46,191,165,0.06); color: #7EB8D4; }
+
+[data-theme="dark"] .insights-generate-area {
+  background: rgba(46,191,165,0.05);
+  border-color: rgba(46,191,165,0.25);
+}
+
+[data-theme="dark"] .insights-result-text {
+  background: linear-gradient(135deg, rgba(46,191,165,0.08), rgba(26,107,138,0.08));
+  border-color: rgba(46,191,165,0.2);
+  color: #D0E8F5;
+}
+
+[data-theme="dark"] .insights-footer {
+  background: #0D1421;
+  border-top-color: rgba(46,191,165,0.12);
+}
+
+[data-theme="dark"] .insights-api-missing {
+  background: rgba(214,158,46,0.08);
+  border-color: rgba(214,158,46,0.3);
+  color: #F6AD55;
+}
+
+[data-theme="dark"] .insights-api-missing code {
+  background: rgba(214,158,46,0.12);
+}
+
+/* ── Job Detail Modal ── */
+[data-theme="dark"] .modal-drawer { background: #131C2E; }
+
+[data-theme="dark"] .detail-fact {
+  background: #0D1421;
+}
+
+[data-theme="dark"] .detail-section-title { border-bottom-color: rgba(46,191,165,0.15); }
+
+[data-theme="dark"] .modal-footer {
+  border-top-color: rgba(46,191,165,0.12);
+  background: #0D1421;
+}
+
+/* ── Confirm Dialog ── */
+[data-theme="dark"] .dialog-box { background: #131C2E; }
+
+[data-theme="dark"] .dialog-title { color: #D0E8F5; }
+[data-theme="dark"] .dialog-message { color: #7EB8D4; }
+[data-theme="dark"] .dialog-icon { background: rgba(229,62,62,0.1); }
+
+/* ── Toast ── */
+[data-theme="dark"] .toast {
+  background: #131C2E;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  border-left-color: var(--toast-colour);
+}
+
+[data-theme="dark"] .toast-message { color: #D0E8F5; }
+
+/* ── Add Job Page ── */
+[data-theme="dark"] .addjob-title,
+[data-theme="dark"] .jobs-title   { color: #D0E8F5; }
+
+/* ── Filter Badge ── */
+[data-theme="dark"] .filter-badge {
+  background: rgba(46,191,165,0.1);
+  border-color: rgba(46,191,165,0.3);
+  color: var(--ocean-bright);
+}
+
+[data-theme="dark"] .filter-badge strong { color: #D0E8F5; }
+
+/* ── Radio buttons ── */
+[data-theme="dark"] .radio-label { color: #D0E8F5; }
+[data-theme="dark"] .radio-custom { border-color: #1E3A5F; }
+
+/* ── Speedometer SVG text ── */
+[data-theme="dark"] .speedometer-svg text { fill: #7EB8D4 !important; }
+
+/* ── Page headings ── */
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3 { color: #D0E8F5; }
+
+[data-theme="dark"] .speedometer-card-desc { color: #7EB8D4; }
+[data-theme="dark"] .addjob-subtitle,
+[data-theme="dark"] .jobs-subtitle,
+[data-theme="dark"] .dashboard-subtitle  { color: #7EB8D4; }
+

@@ -1,0 +1,126 @@
+/* MetricTile styles */
+.metric-tile {
+  background: var(--white);
+  border-radius: var(--radius-tile);
+  padding: 1.25rem 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(58,175,169,0.12);
+  cursor: default;
+  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-tile::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--tile-colour, var(--ocean-bright));
+  border-radius: 4px 0 0 4px;
+}
+
+/* Clickable variant */
+.metric-tile--clickable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.metric-tile--clickable:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--tile-colour, var(--ocean-wave));
+}
+
+.metric-tile--clickable:active {
+  transform: translateY(-2px);
+}
+
+.metric-tile--clickable:focus-visible {
+  outline: 2px solid var(--tile-colour, var(--ocean-bright));
+  outline-offset: 2px;
+}
+
+/* Arrow indicator on clickable tiles */
+.tile-arrow {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  font-size: 1.4rem;
+  color: var(--tile-colour, var(--ocean-bright));
+  opacity: 0;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  line-height: 1;
+}
+
+.metric-tile--clickable:hover .tile-arrow {
+  opacity: 0.7;
+  transform: translateY(-50%) translateX(2px);
+}
+
+/* Icon */
+.tile-icon-wrap {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--tile-colour, var(--ocean-bright)) 15%, transparent);
+  color: var(--tile-colour, var(--ocean-bright));
+  transition: background var(--transition-fast);
+}
+
+.metric-tile--clickable:hover .tile-icon-wrap {
+  background: color-mix(in srgb, var(--tile-colour, var(--ocean-bright)) 25%, transparent);
+}
+
+/* Body */
+.tile-body {
+  flex: 1;
+  min-width: 0;
+  padding-right: 1.2rem; /* space for arrow */
+}
+
+.tile-value {
+  font-size: 1.9rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.tile-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tile-subtitle {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+/* Clickable subtitle (link style) */
+.tile-subtitle--link {
+  color: var(--ocean-mid);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  display: inline-block;
+}
+
+.tile-subtitle--link:hover {
+  color: var(--ocean-bright);
+}

@@ -24,3 +24,5 @@ Thumbs.db
 
 # NOTE: dist/ is intentionally NOT ignored
 # Vercel needs the pre-built frontend committed to the repo
+
+.vercel

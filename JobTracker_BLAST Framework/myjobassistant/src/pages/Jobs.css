@@ -1,0 +1,60 @@
+/* Jobs page styles */
+.jobs-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.jobs-header-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--ocean-mid), var(--ocean-wave));
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(26,107,138,0.3);
+}
+
+.jobs-title {
+  color: var(--ocean-deep);
+  font-size: 1.75rem;
+  font-weight: 800;
+}
+
+.jobs-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+}
+
+/* Active filter badge */
+.filter-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  background: var(--ocean-foam);
+  border: 1.5px solid var(--ocean-wave);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: var(--ocean-mid);
+  margin-bottom: 1rem;
+}
+
+.filter-badge strong {
+  color: var(--ocean-deep);
+}
+
+.jobs-card {
+  padding: 1.5rem;
+  overflow: hidden;
+}
+
+@media (max-width: 640px) {
+  .jobs-card { padding: 1rem 0.5rem; }
+  .jobs-title { font-size: 1.35rem; }
+}
