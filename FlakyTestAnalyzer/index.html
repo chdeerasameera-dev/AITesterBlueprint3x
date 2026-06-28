@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Playwright Flaky Test Analyzer</title>
+  <meta name="description" content="An advanced reliability engineering tool to parse, compare, and analyze Playwright test runs for flakiness and consistent bugs.">
+  
+  <!-- Premium Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- External CDNs for Charts, Icons, and Markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Top Decorative Glow Grid -->
+    <div class="bg-glow"></div>
+
+    <!-- Header Section -->
+    <header class="app-header">
+      <div class="header-logo-section">
+        <div class="logo-icon-wrapper">
+          <i data-lucide="shield-alert" class="logo-icon text-glow"></i>
+        </div>
+        <div>
+          <h1 class="app-title">Playwright Flaky Test Analyzer</h1>
+          <p class="app-subtitle">Senior Test Reliability Engineering Dashboard</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span class="status-indicator-badge">
+          <span class="status-dot green"></span>
+          Ready to Analyze
+        </span>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="app-main">
+      
+      <!-- Configurations & Inputs Area -->
+      <section class="config-section card glass">
+        <div class="config-header">
+          <h2 class="section-title"><i data-lucide="sliders" class="section-icon"></i> Analysis Parameters</h2>
+          <span class="info-tag">Define API Key for AI Analysis</span>
+        </div>
+        
+        <div class="config-grid">
+          <div class="input-group">
+            <label for="gemini-api-key" class="input-label">Gemini API Key</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="gemini-api-key" placeholder="Enter your Gemini API key (stored locally)" class="styled-input">
+              <button id="toggle-key-visibility" class="btn-icon" aria-label="Toggle password visibility">
+                <i data-lucide="eye" id="eye-icon"></i>
+              </button>
+            </div>
+            <p class="input-hint">Needed for the one-line flake hypotheses and narrative reports. Locally stored in your browser.</p>
+          </div>
+          
+          <div class="input-group flex-row align-end">
+            <button id="btn-load-samples" class="btn-secondary">
+              <i data-lucide="database" class="btn-icon-left"></i> Load Workspace Samples
+            </button>
+            <button id="btn-clear-workspace" class="btn-text">
+              <i data-lucide="trash-2" class="btn-icon-left"></i> Clear Workspace
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Drag & Drop Upload Cards -->
+      <section class="upload-section-grid">
+        <!-- Build 1 Upload -->
+        <div class="upload-card card glass" id="drop-zone-1">
+          <input type="file" id="file-input-1" accept=".json" class="hidden-file-input">
+          <div class="upload-content">
+            <div class="upload-icon-wrapper blue-glow">
+              <i data-lucide="file-json" class="upload-icon"></i>
+            </div>
+            <h3 class="upload-title">Build 1 (Baseline)</h3>
+            <p class="upload-desc">Drag & drop your baseline <span>results.json</span> or click to browse</p>
+            <div class="file-info-badge hidden" id="file-info-1">
+              <i data-lucide="check-circle" class="file-success-icon"></i>
+              <span class="file-name">filename.json</span>
+              <button class="remove-file-btn" id="remove-file-1" aria-label="Remove File">&times;</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Build 2 Upload -->
+        <div class="upload-card card glass" id="drop-zone-2">
+          <input type="file" id="file-input-2" accept=".json" class="hidden-file-input">
+          <div class="upload-content">
+            <div class="upload-icon-wrapper purple-glow">
+              <i data-lucide="file-json" class="upload-icon"></i>
+            </div>
+            <h3 class="upload-title">Build 2 (Comparison)</h3>
+            <p class="upload-desc">Drag & drop your comparison <span>results.json</span> or click to browse</p>
+            <div class="file-info-badge hidden" id="file-info-2">
+              <i data-lucide="check-circle" class="file-success-icon"></i>
+              <span class="file-name">filename.json</span>
+              <button class="remove-file-btn" id="remove-file-2" aria-label="Remove File">&times;</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Analyze Execution Trigger -->
+      <div class="action-bar text-center">
+        <button id="btn-run-analysis" class="btn-primary" disabled>
+          <i data-lucide="play" class="btn-icon-left"></i> Run Reliability Analysis
+        </button>
+      </div>
+
+      <!-- Loading / Analyzing State -->
+      <section class="loading-state hidden card glass text-center" id="loading-container">
+        <div class="spinner-container">
+          <div class="spinner"></div>
+          <div class="spinner-inner"></div>
+        </div>
+        <h3 class="loading-title">Parsing Playwright Reports...</h3>
+        <p class="loading-text" id="loading-status-message">Extracting spec titles, checking retries, and cross-referencing outcomes.</p>
+      </section>
+
+      <!-- Dashboard Results View (Initially Hidden) -->
+      <div id="analysis-results-container" class="hidden">
+        
+        <!-- KPI Row -->
+        <section class="kpi-grid">
+          <!-- Total Specs -->
+          <div class="kpi-card card glass border-left-blue">
+            <div class="kpi-header">
+              <span class="kpi-title">Total Specs</span>
+              <i data-lucide="check-square" class="kpi-icon text-blue"></i>
+            </div>
+            <div class="kpi-value" id="kpi-total-specs">50</div>
+            <p class="kpi-subtext">Common tests in both builds</p>
+          </div>
+
+          <!-- Passed (Consistent) -->
+          <div class="kpi-card card glass border-left-green">
+            <div class="kpi-header">
+              <span class="kpi-title">Consistent Passes</span>
+              <i data-lucide="smile" class="kpi-icon text-green"></i>
+            </div>
+            <div class="kpi-value" id="kpi-passed-specs">47</div>
+            <p class="kpi-subtext" id="kpi-passed-pct">94% of suite</p>
+          </div>
+
+          <!-- Flaky Tests -->
+          <div class="kpi-card card glass border-left-yellow">
+            <div class="kpi-header">
+              <span class="kpi-title">Flaky Tests</span>
+              <i data-lucide="shuffle" class="kpi-icon text-yellow"></i>
+            </div>
+            <div class="kpi-value" id="kpi-flaky-specs">1</div>
+            <p class="kpi-subtext text-yellow">Needs reruns / quarantine</p>
+          </div>
+
+          <!-- Consistent Failures -->
+          <div class="kpi-card card glass border-left-red">
+            <div class="kpi-header">
+              <span class="kpi-title">Consistent Bugs</span>
+              <i data-lucide="bug" class="kpi-icon text-red"></i>
+            </div>
+            <div class="kpi-value" id="kpi-failed-specs">2</div>
+            <p class="kpi-subtext text-red">Requires engineering fix</p>
+          </div>
+        </section>
+
+        <!-- Suite Health Score Card -->
+        <section class="suite-health-container card glass">
+          <div class="suite-health-flex">
+            <div class="health-gauge-section">
+              <div class="health-circle-wrapper">
+                <svg class="health-svg" viewBox="0 0 36 36">
+                  <path class="health-track" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path class="health-fill" id="health-svg-fill" stroke-dasharray="94, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+                <div class="health-percentage" id="health-percentage-text">94.0%</div>
+              </div>
+            </div>
+            <div class="health-details-section">
+              <h3 class="health-heading">Suite Reliability Score</h3>
+              <p class="health-description" id="health-description-text">Your suite shows solid health, but has 1 flaky test and 2 consistent bugs. Address consistent failures before rerun checks.</p>
+              <div class="health-tags-summary">
+                <span class="meta-item"><i data-lucide="tag"></i> P0 Tests: <strong id="kpi-p0-count">25</strong></span>
+                <span class="meta-item"><i data-lucide="tag"></i> P1 Tests: <strong id="kpi-p1-count">25</strong></span>
+                <span class="meta-item"><i data-lucide="clock"></i> Duration B1: <strong id="kpi-b1-duration">1.2m</strong></span>
+                <span class="meta-item"><i data-lucide="clock"></i> Duration B2: <strong id="kpi-b2-duration">1.1m</strong></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tabs Navigation -->
+        <nav class="dashboard-tabs">
+          <button class="tab-btn active" id="tab-overview" data-target="panel-overview">
+            <i data-lucide="layout-dashboard"></i> Overview & Metrics
+          </button>
+          <button class="tab-btn" id="tab-flaky" data-target="panel-flaky">
+            <i data-lucide="shuffle"></i> Flaky Tests <span class="badge-count yellow" id="badge-flaky-count">1</span>
+          </button>
+          <button class="tab-btn" id="tab-failed" data-target="panel-failed">
+            <i data-lucide="bug"></i> Consistent Bugs <span class="badge-count red" id="badge-failed-count">2</span>
+          </button>
+          <button class="tab-btn" id="tab-report" data-target="panel-report">
+            <i data-lucide="file-text"></i> Reliability Report
+          </button>
+        </nav>
+
+        <!-- Tab Panels -->
+        <div class="tab-content-container">
+          
+          <!-- Panel: Overview & Metrics -->
+          <div class="tab-panel active" id="panel-overview">
+            <div class="overview-charts-grid">
+              <!-- Duration Chart -->
+              <div class="chart-card card glass">
+                <h3 class="chart-title"><i data-lucide="hourglass"></i> Build Duration Comparison</h3>
+                <div class="chart-wrapper">
+                  <canvas id="durationChart"></canvas>
+                </div>
+              </div>
+              
+              <!-- Failure Categorization -->
+              <div class="chart-card card glass">
+                <h3 class="chart-title"><i data-lucide="pie-chart"></i> Issue Types Distribution</h3>
+                <div class="chart-wrapper">
+                  <canvas id="issuesChart"></canvas>
+                </div>
+              </div>
+            </div>
+            
+            <div class="tag-stats-section card glass">
+              <h3 class="section-title"><i data-lucide="tags"></i> Tag-Based Success Rates</h3>
+              <div class="tags-rates-grid" id="tags-success-rates-grid">
+                <!-- Dynamic Tag Rows -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel: Flaky Tests -->
+          <div class="tab-panel" id="panel-flaky">
+            <div class="table-card card glass">
+              <div class="table-header">
+                <h3 class="table-title">Flaky Test Roster (Re-run Recommended)</h3>
+                <p class="table-subtitle">Tests that passed in one build and failed in the other, or resolved on retry. Isolated reruns needed.</p>
+              </div>
+              <div class="table-overflow">
+                <table class="data-table" id="flaky-tests-table">
+                  <thead>
+                    <tr>
+                      <th>Test Description</th>
+                      <th>Spec File</th>
+                      <th>Build 1</th>
+                      <th>Build 2</th>
+                      <th>AI Hypothesis / Local Analysis</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Dynamically Generated -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel: Consistent Bugs -->
+          <div class="tab-panel" id="panel-failed">
+            <div class="table-card card glass">
+              <div class="table-header">
+                <h3 class="table-title">Consistent Failures (Fix Required)</h3>
+                <p class="table-subtitle">Tests that failed in BOTH builds. Indicates a reproducible codebase bug or regression.</p>
+              </div>
+              
+              <div class="failures-list" id="consistent-failures-list">
+                <!-- Dynamically Generated Accordions -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel: Reliability Report -->
+          <div class="tab-panel" id="panel-report">
+            <div class="report-container card glass">
+              <div class="report-controls">
+                <div class="report-meta-info">
+                  <i data-lucide="file-check" class="text-green"></i>
+                  <span>Format matches <strong>prompt.md</strong> guidelines</span>
+                </div>
+                <div class="report-actions">
+                  <button id="btn-copy-report" class="btn-secondary sm">
+                    <i data-lucide="copy" class="btn-icon-left"></i> Copy Markdown
+                  </button>
+                  <button id="btn-download-report" class="btn-secondary sm">
+                    <i data-lucide="download" class="btn-icon-left"></i> Download MD
+                  </button>
+                  <button id="btn-ai-regenerate" class="btn-primary sm">
+                    <i data-lucide="sparkles" class="btn-icon-left"></i> Regenerate AI Report
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Report Markdown Rendering -->
+              <div class="report-paper-body markdown-body" id="report-rendered-content">
+                <!-- Rendered Markdown goes here -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>&copy; 2026 Playwright Flaky Test Analyzer. Built for Test Reliability Engineering.</p>
+    </footer>
+
+  </div>
+  
+  <script src="app.js"></script>
+</body>
+</html>
