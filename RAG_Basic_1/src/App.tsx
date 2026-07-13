@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   FileText,
   Database,
@@ -64,6 +64,202 @@ interface QueryResponse {
   prompt_sent: string
   generated_answer: string
   model_used: string
+}
+
+const renderMarkdown = (text: string) => {
+  if (!text) return null
+
+  // Split text into blocks (paragraphs, tables, lists, headers)
+  const lines = text.split('\n')
+  const elements: React.ReactNode[] = []
+  
+  let currentTable: { headers: string[]; rows: string[][] } | null = null
+  let tableKey = 0
+  
+  // Helper to parse inline markdown (bold, italic, br, code blocks)
+  const parseInline = (str: string): React.ReactNode[] => {
+    const parts = str.split('**')
+    return parts.map((part, i) => {
+      if (i % 2 === 1) {
+        return <strong key={i}>{parseInlineFormatting(part)}</strong>
+      }
+      return parseInlineFormatting(part)
+    })
+  }
+
+  const parseInlineFormatting = (str: string): React.ReactNode => {
+    // Check for inline backticks `code`
+    const codeParts = str.split('`')
+    if (codeParts.length > 1) {
+      return (
+        <>
+          {codeParts.map((part, index) => {
+            if (index % 2 === 1) {
+              return (
+                <code key={index} style={{ background: 'rgba(255,255,255,0.1)', padding: '2px 4px', borderRadius: '4px', fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: '#FDA4AF' }}>
+                  {part}
+                </code>
+              )
+            }
+            return parseBrTags(part)
+          })}
+        </>
+      )
+    }
+    return parseBrTags(str)
+  }
+
+  const parseBrTags = (str: string): React.ReactNode => {
+    const brParts = str.split(/<br\s*\/?>/i)
+    return (
+      <>
+        {brParts.map((bp, index) => (
+          <span key={index}>
+            {index > 0 && <br />}
+            {bp}
+          </span>
+        ))}
+      </>
+    )
+  }
+
+  for (let idx = 0; idx < lines.length; idx++) {
+    const line = lines[idx].trim()
+
+    // Check for Table Row: lines starting and ending with |
+    if (line.startsWith('|') && line.endsWith('|')) {
+      const cols = line.split('|').slice(1, -1).map(c => c.trim())
+      
+      // Skip markdown table alignment separators (e.g. |----|----|)
+      if (cols.every(col => /^:?-+:?$/.test(col))) {
+        continue
+      }
+      
+      if (!currentTable) {
+        currentTable = { headers: cols, rows: [] }
+      } else {
+        currentTable.rows.push(cols)
+      }
+      continue
+    } else {
+      // If a table block was active and we hit a non-table line, render it
+      if (currentTable) {
+        elements.push(
+          <div key={`table-${tableKey++}`} className="markdown-table-wrapper" style={{ overflowX: 'auto', margin: '1rem 0' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid var(--border-glass)', fontSize: '0.85rem' }}>
+              <thead>
+                <tr style={{ background: 'rgba(168, 85, 247, 0.15)', borderBottom: '2px solid var(--border-glass)' }}>
+                  {currentTable.headers.map((h, i) => (
+                    <th key={i} style={{ padding: '0.6rem 0.8rem', textAlign: 'left', fontWeight: 600, color: 'var(--purple-light)' }}>
+                      {parseInline(h)}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {currentTable.rows.map((row, rIdx) => (
+                  <tr key={rIdx} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', background: rIdx % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent' }}>
+                    {row.map((cell, cIdx) => (
+                      <td key={cIdx} style={{ padding: '0.6rem 0.8rem', color: '#E5E7EB', lineHeight: '1.4' }}>
+                        {parseInline(cell)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )
+        currentTable = null
+      }
+    }
+
+    if (line === '') {
+      continue
+    }
+
+    // Check for Headings
+    if (line.startsWith('#')) {
+      const level = Math.min(line.match(/^#+/)?.[0].length || 1, 6)
+      const headingText = line.replace(/^#+\s*/, '')
+      const parsedText = parseInline(headingText)
+      
+      if (level === 1) {
+        elements.push(<h1 key={idx} style={{ margin: '1.25rem 0 0.75rem 0', fontWeight: 700, color: '#FFF', fontSize: '1.4rem' }}>{parsedText}</h1>)
+      } else if (level === 2) {
+        elements.push(<h2 key={idx} style={{ margin: '1.25rem 0 0.75rem 0', fontWeight: 700, color: '#FFF', fontSize: '1.2rem' }}>{parsedText}</h2>)
+      } else if (level === 3) {
+        elements.push(<h3 key={idx} style={{ margin: '1.25rem 0 0.75rem 0', fontWeight: 700, color: '#FFF', fontSize: '1.05rem' }}>{parsedText}</h3>)
+      } else {
+        elements.push(<h4 key={idx} style={{ margin: '1.25rem 0 0.75rem 0', fontWeight: 700, color: '#FFF', fontSize: '0.95rem' }}>{parsedText}</h4>)
+      }
+      continue
+    }
+
+    // Check for Bullet Points (starting with • or - or * or numbered lists)
+    if (line.startsWith('•') || line.startsWith('-') || line.startsWith('*')) {
+      const listText = line.replace(/^[•\-\*]\s*/, '')
+      elements.push(
+        <div key={idx} style={{ display: 'flex', gap: '0.5rem', margin: '0.35rem 0 0.35rem 0.75rem', fontSize: '0.88rem', color: '#D1D5DB' }}>
+          <span style={{ color: 'var(--purple-light)' }}>•</span>
+          <div>{parseInline(listText)}</div>
+        </div>
+      )
+      continue
+    }
+
+    const numberedMatch = line.match(/^(\d+)\.\s(.*)/)
+    if (numberedMatch) {
+      const num = numberedMatch[1]
+      const listText = numberedMatch[2]
+      elements.push(
+        <div key={idx} style={{ display: 'flex', gap: '0.5rem', margin: '0.35rem 0 0.35rem 0.75rem', fontSize: '0.88rem', color: '#D1D5DB' }}>
+          <span style={{ color: 'var(--purple-light)', fontWeight: 600 }}>{num}.</span>
+          <div>{parseInline(listText)}</div>
+        </div>
+      )
+      continue
+    }
+
+    // Normal paragraph
+    elements.push(
+      <p key={idx} style={{ margin: '0.75rem 0', fontSize: '0.88rem', lineHeight: '1.5', color: '#D1D5DB' }}>
+        {parseInline(line)}
+      </p>
+    )
+  }
+
+  // Handle trailing table if it was at the very end
+  if (currentTable) {
+    elements.push(
+      <div key={`table-last`} className="markdown-table-wrapper" style={{ overflowX: 'auto', margin: '1rem 0' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid var(--border-glass)', fontSize: '0.85rem' }}>
+          <thead>
+            <tr style={{ background: 'rgba(168, 85, 247, 0.15)', borderBottom: '2px solid var(--border-glass)' }}>
+              {currentTable.headers.map((h, i) => (
+                <th key={i} style={{ padding: '0.6rem 0.8rem', textAlign: 'left', fontWeight: 600, color: 'var(--purple-light)' }}>
+                  {parseInline(h)}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {currentTable.rows.map((row, rIdx) => (
+              <tr key={rIdx} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', background: rIdx % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent' }}>
+                {row.map((cell, cIdx) => (
+                  <td key={cIdx} style={{ padding: '0.6rem 0.8rem', color: '#E5E7EB', lineHeight: '1.4' }}>
+                    {parseInline(cell)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )
+  }
+
+  return <>{elements}</>
 }
 
 function App() {
@@ -837,8 +1033,8 @@ function App() {
               
               <div style={{ padding: '1.25rem' }}>
                 {/* Answer Output */}
-                <div style={{ background: 'rgba(168, 85, 247, 0.03)', borderLeft: '4px solid var(--accent-purple)', padding: '1rem', borderRadius: '0 0.5rem 0.5rem 0', fontSize: '0.92rem', color: '#F3F4F6', lineHeight: '1.6', whiteSpace: 'pre-line' }}>
-                  {queryResult.generated_answer}
+                <div style={{ background: 'rgba(168, 85, 247, 0.03)', borderLeft: '4px solid var(--accent-purple)', padding: '1rem', borderRadius: '0 0.5rem 0.5rem 0', fontSize: '0.92rem', color: '#F3F4F6', lineHeight: '1.6' }}>
+                  {renderMarkdown(queryResult.generated_answer)}
                 </div>
                 
                 {/* Collapsible Prompt Panel */}
