@@ -306,13 +306,6 @@ function App() {
     }
   }
 
-  const formatBytes = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes'
-    const k = 1024
-    const sizes = ['Bytes', 'KB', 'MB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
-  }
 
   return (
     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
@@ -660,7 +653,7 @@ function App() {
               {panels.chunkList && (
                 <div className="panel-content" style={{ maxHeight: '400px', overflowY: 'auto' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                    {status.chunks.slice(0, 15).map((chunk, idx) => (
+                    {status.chunks.slice(0, 15).map((chunk) => (
                       <div 
                         key={chunk.chunk_id} 
                         style={{ padding: '0.75rem', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border-glass)', borderRadius: '0.5rem', fontSize: '0.82rem' }}
@@ -675,7 +668,7 @@ function App() {
                       </div>
                     ))}
                     {status.chunks.length > 15 && (
-                      <div style={{ textAlignment: 'center', color: 'var(--text-muted)', fontSize: '0.75rem', padding: '0.5rem', textAlign: 'center' }}>
+                      <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', padding: '0.5rem', textAlign: 'center' }}>
                         + {status.chunks.length - 15} more chunks stored in ChromaDB
                       </div>
                     )}
