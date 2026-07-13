@@ -302,6 +302,22 @@ function App() {
     setPanels(prev => ({ ...prev, [panelName]: !prev[panelName] }))
   }
 
+  // Keep activeStep synchronized with selectedFile vs database_pdf
+  useEffect(() => {
+    if (status) {
+      const isSynced = selectedFile && status.database_pdf && selectedFile === status.database_pdf
+      if (isSynced) {
+        if (!ingesting && activeStep < 3) {
+          setActiveStep(3) // Vector Storage complete
+        }
+      } else {
+        if (!ingesting && activeStep <= 3) {
+          setActiveStep(0) // Reset to PDF Ready / Ingestion required
+        }
+      }
+    }
+  }, [selectedFile, status?.database_pdf, ingesting])
+
   // Fetch current status on load
   const fetchStatus = async () => {
     try {
