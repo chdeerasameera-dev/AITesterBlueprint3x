@@ -291,7 +291,7 @@ body {
 /* Two Pane Dashboard Content */
 .pane-layout {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-columns: 0.9fr 1.1fr;
   gap: 1.5rem;
   min-height: 0;
 }
@@ -372,7 +372,7 @@ body {
 .message-bubble {
   display: flex;
   flex-direction: column;
-  max-width: 85%;
+  max-width: 95%;
   padding: 1rem;
   border-radius: 12px;
   animation: fade-in 0.3s ease-out;
@@ -388,6 +388,7 @@ body {
   background: rgba(245, 158, 11, 0.03);
   border: 1px solid rgba(245, 158, 11, 0.08);
   align-self: flex-start;
+  width: 100%;
 }
 
 .message-meta {
@@ -478,6 +479,7 @@ body {
 /* Markdown styling inside QA test cases */
 .qa-test-case-wrapper table {
   width: 100%;
+  min-width: 1100px; /* Enforce wide layout so columns don't squeeze */
   border-collapse: collapse;
   margin-top: 1rem;
   font-size: 0.85rem;
