@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QABuddy.AI — Architecture & Technical Specifications</title>
+  <meta name="description" content="QABuddy.AI system architecture, Qdrant vector integration, data flow, use case diagram and technical specifications.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:         #FDF8F0;
+      --bg-card:    rgba(255, 248, 235, 0.96);
+      --bg-section: #F5EDE0;
+      --border:     rgba(139, 90, 43, 0.16);
+      --border-s:   rgba(139, 90, 43, 0.32);
+      --text:       #2C1A0E;
+      --text-2:     #6B4226;
+      --text-m:     #A0714F;
+      --primary:    #8B5E3C;
+      --p-glow:     rgba(139, 94, 60, 0.2);
+      --secondary:  #C47A2B;
+      --accent:     #5C3317;
+      --success:    #4A7C59;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      line-height: 1.65;
+      padding: 40px 20px 80px;
+      background-image:
+        radial-gradient(ellipse at 8% 5%,  rgba(196,122,43,0.07) 0%, transparent 45%),
+        radial-gradient(ellipse at 92% 92%, rgba(139,94,60,0.06) 0%, transparent 45%);
+      background-attachment: fixed;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    /* ── Header ── */
+    header { text-align: center; margin-bottom: 48px; }
+
+    .logo-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 18px; margin-bottom: 18px;
+      background: rgba(139,94,60,0.1); border: 1px solid var(--border-s);
+      border-radius: 30px; font-size: 0.78rem; font-weight: 700;
+      color: var(--primary); letter-spacing: 0.06em;
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif; font-size: 2.6rem;
+      font-weight: 800; letter-spacing: -0.04em; margin-bottom: 12px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 55%, #D4956A 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle { font-size: 1rem; color: var(--text-m); max-width: 600px; margin: 0 auto; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: 20px; padding: 28px 26px; margin-bottom: 22px;
+      box-shadow: 0 4px 20px rgba(44,26,14,0.06);
+    }
+
+    h2 {
+      font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 700;
+      color: var(--primary); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 9px;
+    }
+
+    h3 { font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 600; color: var(--text-2); margin: 18px 0 10px; }
+
+    /* ── Tables ── */
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; margin: 12px 0; }
+    th {
+      background: rgba(139,94,60,0.08); color: var(--primary);
+      padding: 10px 13px; text-align: left; font-weight: 700;
+      border-bottom: 2px solid rgba(139,94,60,0.15);
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    td { padding: 10px 13px; border-bottom: 1px solid var(--border); color: var(--text-2); line-height: 1.5; vertical-align: top; }
+    td:first-child { color: var(--secondary); font-weight: 700; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+    tr:hover td { background: rgba(139,94,60,0.04); color: var(--text); }
+
+    /* ── Badges ── */
+    .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+    .b {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 11px; border-radius: 20px;
+      font-size: 0.72rem; font-weight: 700;
+    }
+    .b-brown  { background: rgba(139,94,60,0.1);  color: var(--primary);   border: 1px solid rgba(139,94,60,0.25); }
+    .b-green  { background: rgba(74,124,89,0.1);   color: var(--success);  border: 1px solid rgba(74,124,89,0.25); }
+    .b-amber  { background: rgba(196,122,43,0.1);  color: var(--secondary); border: 1px solid rgba(196,122,43,0.25); }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(139,94,60,0.09); color: var(--primary);
+      padding: 2px 6px; border-radius: 4px; font-size: 0.82em;
+    }
+
+    /* ── Code snippet box ── */
+    .code-box {
+      background: rgba(44, 26, 14, 0.04);
+      border: 1px solid var(--border-s);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--text);
+      line-height: 1.6;
+      margin-top: 12px;
+    }
+
+    /* ── Elegant Use Case Directory Grid ── */
+    .roles-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .role-card {
+      padding: 16px;
+      border-radius: 14px;
+      background: rgba(255,250,244,0.8);
+      border: 1.5px solid var(--border);
+      transition: all 0.25s ease;
+    }
+
+    .role-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(44,26,14,0.06);
+    }
+
+    .usecase-sys-box {
+      border: 2px dashed rgba(139,94,60,0.3);
+      border-radius: 18px;
+      padding: 26px 20px 20px;
+      position: relative;
+      background: rgba(255,250,244,0.6);
+    }
+
+    .usecase-sys-label {
+      position: absolute; top: -12px; left: 18px;
+      background: var(--bg); padding: 2px 12px;
+      font-size: 0.72rem; font-weight: 700; color: var(--primary);
+      border-radius: 6px; border: 1px solid rgba(139,94,60,0.2);
+      letter-spacing: 0.05em;
+    }
+
+    .uc-card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .uc-card-item {
+      padding: 14px 16px;
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .uc-card-item:hover {
+      border-color: var(--primary);
+      box-shadow: 0 4px 14px rgba(44,26,14,0.06);
+    }
+
+    /* ── Flow diagram ── */
+    .flow-row {
+      display: flex; align-items: center; gap: 8px;
+      flex-wrap: wrap; margin: 12px 0;
+    }
+    .flow-node {
+      padding: 8px 14px; border-radius: 9px; border: 1.5px solid;
+      font-size: 0.77rem; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 5px;
+      white-space: nowrap;
+    }
+    .flow-arrow { color: var(--text-m); opacity: 0.5; font-size: 1rem; flex-shrink: 0; }
+
+    @media (max-width: 768px) {
+      .roles-grid, .uc-card-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <header>
+    <div class="logo-pill">🤖 QABuddy.AI · Technical Architecture Specs</div>
+    <h1>System Architecture &amp; Specifications</h1>
+    <p class="subtitle">Multi-source RAG system powered by Qdrant (http://localhost:6333) and Groq LLMs</p>
+  </header>
+
+  <!-- Overview -->
+  <div class="card">
+    <h2>🤖 Overview &amp; Objectives</h2>
+    <p style="color:var(--text-2);font-size:.92rem;line-height:1.7">
+      <strong style="color:var(--text)">QABuddy.AI</strong> is a self-hosted, grounded QA assistant engineered for software QA teams.
+      It connects directly to a local Qdrant vector database server at <code>http://localhost:6333</code> and uses Groq high-speed LLMs.
+      Strict threshold gating guarantees factual precision — responding with <em style="color:var(--primary)">"information not found in knowledge base"</em> rather than generating hallucinations.
+    </p>
+    <div class="badges">
+      <span class="b b-brown">⚡ Groq LLM (llama-3.3-70b)</span>
+      <span class="b b-amber">📦 Qdrant Server (localhost:6333)</span>
+      <span class="b b-brown">🔢 Dense + Sparse Embeddings</span>
+      <span class="b b-green">✅ Citation Grounded</span>
+      <span class="b b-green">🛡️ Hallucination Gated</span>
+    </div>
+  </div>
+
+  <!-- Qdrant Local Configuration Code -->
+  <div class="card">
+    <h2>📦 Qdrant Server Client Integration</h2>
+    <p style="color:var(--text-2);font-size:.88rem">
+      The Python backend initializes QdrantClient connecting to local server at <code>http://localhost:6333</code>:
+    </p>
+    <div class="code-box">
+<span style="color:#A0714F"># Python Qdrant Initialization</span>
+<span style="color:#8B5E3C;font-weight:700">from</span> qdrant_client <span style="color:#8B5E3C;font-weight:700">import</span> QdrantClient
+
+client = QdrantClient(url=<span style="color:#4A7C59">"http://localhost:6333"</span>)
+print(client.get_collections())
+
+<span style="color:#A0714F"># API Health check</span>
+<span style="color:#8B5E3C;font-weight:700">curl</span> -X GET <span style="color:#4A7C59">"http://localhost:6333"</span>
+    </div>
+  </div>
+
+  <!-- Use Case Diagram Directory -->
+  <div class="card">
+    <h2>🎯 Actor &amp; Use Case Mapping</h2>
+    <p style="color:var(--text-m);font-size:.86rem;margin-bottom:18px">
+      Structured interaction boundary for QA Engineers, Developers, and System Admins
+    </p>
+
+    <!-- Role summary cards -->
+    <div class="roles-grid">
+      <div class="role-card">
+        <div style="font-size:1.4rem;margin-bottom:6px">🧪</div>
+        <div style="font-weight:700;color:#8B5E3C;font-size:0.92rem;margin-bottom:4px">QA Engineer</div>
+        <div style="font-size:0.78rem;color:var(--text-m);line-height:1.45">Queries test runs, JIRA defects, requirement docs, and verifies grounded citations.</div>
+      </div>
+      <div class="role-card">
+        <div style="font-size:1.4rem;margin-bottom:6px">💻</div>
+        <div style="font-weight:700;color:#4A6E8A;font-size:0.92rem;margin-bottom:4px">Developer</div>
+        <div style="font-size:0.78rem;color:var(--text-m);line-height:1.45">Searches Selenium Java &amp; Playwright TypeScript POM frameworks and inspects vector pipeline traces.</div>
+      </div>
+      <div class="role-card">
+        <div style="font-size:1.4rem;margin-bottom:6px">⚙️</div>
+        <div style="font-weight:700;color:#C47A2B;font-size:0.92rem;margin-bottom:4px">Admin</div>
+        <div style="font-size:0.78rem;color:var(--text-m);line-height:1.45">Manages document ingestion into Qdrant server at http://localhost:6333 and configures chunk params.</div>
+      </div>
+    </div>
+
+    <!-- System boundary -->
+    <div class="usecase-sys-box">
+      <div class="usecase-sys-label">QABuddy.AI System Boundary</div>
+
+      <div class="uc-card-grid">
+        <div class="uc-card-item">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-weight:700;font-size:0.86rem">🧪 Ask About Test Failures</div>
+            <span class="b b-brown">QA Engineer</span>
+          </div>
+          <div style="font-size:0.78rem;color:var(--text-2)">Query Jenkins build logs and test execution histories to diagnose failure stack traces.</div>
+        </div>
+
+        <div class="uc-card-item">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-weight:700;font-size:0.86rem">🎫 Query JIRA Tickets &amp; Bugs</div>
+            <span class="b b-brown">QA Engineer</span>
+          </div>
+          <div style="font-size:0.78rem;color:var(--text-2)">Search past bug reports, resolution steps, and comment threads across sprint histories.</div>
+        </div>
+
+        <div class="uc-card-item">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-weight:700;font-size:0.86rem">💻 Search POM Framework Code</div>
+            <span class="b" style="background:rgba(74,110,138,0.1);color:#4A6E8A;border:1px solid rgba(74,110,138,0.25)">Developer</span>
+          </div>
+          <div style="font-size:0.78rem;color:var(--text-2)">Retrieve Selenium Java or Playwright TypeScript page objects, locators, and spec files.</div>
+        </div>
+
+        <div class="uc-card-item">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-weight:700;font-size:0.86rem">⚙️ Ingest &amp; Index Documents</div>
+            <span class="b b-amber">Admin</span>
+          </div>
+          <div style="font-size:0.78rem;color:var(--text-2)">Process repos, PRDs, and logs into Qdrant vector store running at http://localhost:6333.</div>
+        </div>
+
+        <div class="uc-card-item">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-weight:700;font-size:0.86rem">🛡️ Review Grounded Citations</div>
+            <span class="b b-brown">QA Engineer</span>
+          </div>
+          <div style="font-size:0.78rem;color:var(--text-2)">Verify generated answers against source files using bracketed [1], [2] metadata tags.</div>
+        </div>
+
+        <div class="uc-card-item">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-weight:700;font-size:0.86rem">🔍 Inspect RAG Pipeline &amp; Vectors</div>
+            <span class="b" style="background:rgba(74,110,138,0.1);color:#4A6E8A;border:1px solid rgba(74,110,138,0.25)">Developer</span>
+          </div>
+          <div style="font-size:0.78rem;color:var(--text-2)">Analyze vector retrieval scores, reranking candidate lists, and gating thresholds.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Flow Architecture -->
+  <div class="card">
+    <h2>🏗️ Data Flow Architecture</h2>
+
+    <h3>📥 Ingestion Pipeline (Offline CLI)</h3>
+    <div class="flow-row">
+      <div class="flow-node" style="border-color:rgba(139,94,60,.4);background:rgba(139,94,60,.07);color:var(--primary)">📄 PDF / Code Files</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node" style="border-color:rgba(196,122,43,.4);background:rgba(196,122,43,.07);color:var(--secondary)">🔍 Parser &amp; Splitter</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node" style="border-color:rgba(139,94,60,.35);background:rgba(139,94,60,.04);color:var(--text-2)">✂️ Chunking (500 chars)</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node" style="border-color:rgba(92,51,23,.4); background:rgba(92,51,23,.06); color:var(--accent)">🔢 Nomic Embed</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node" style="border-color:rgba(74,124,89,.4);background:rgba(74,124,89,.07);color:var(--success)">💾 Qdrant (localhost:6333)</div>
+    </div>
+
+    <h3>🔎 Query Pipeline (Live Server)</h3>
+    <div class="flow-row">
+      <div class="flow-node" style="border-color:rgba(139,94,60,.4);background:rgba(139,94,60,.07);color:var(--primary)">👤 User Query</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node" style="border-color:rgba(196,122,43,.4);background:rgba(196,122,43,.07);color:var(--secondary)">🔢 Embed Query</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node" style="border-color:rgba(139,94,60,.35);background:rgba(139,94,60,.04);color:var(--text-2)">🔍 Qdrant Search</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node" style="border-color:rgba(92,51,23,.4); background:rgba(92,51,23,.06); color:var(--accent)">📋 Top-K Chunks</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node" style="border-color:rgba(74,124,89,.4);background:rgba(74,124,89,.07);color:var(--success)">🧠 Groq LLM</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node" style="border-color:rgba(139,94,60,.4);background:rgba(139,94,60,.1); color:var(--primary)">✅ Cited Answer</div>
+    </div>
+  </div>
+
+  <!-- Data Sources Table -->
+  <div class="card">
+    <h2>📁 Data Sources &amp; Chunking Strategies</h2>
+    <table>
+      <thead><tr><th>#</th><th>Source</th><th>Format</th><th>Chunking Strategy</th></tr></thead>
+      <tbody>
+        <tr><td>01</td><td style="color:var(--text);font-weight:600">Selenium POM Repo</td><td><code>Java</code></td><td>Class/Method scope parsing. Separate chunks per method with header paths.</td></tr>
+        <tr><td>02</td><td style="color:var(--text);font-weight:600">Playwright POM Repo</td><td><code>TS/JS</code></td><td>Block scope parsing. Splits by <code>describe</code> / <code>test</code> spec definitions.</td></tr>
+        <tr><td>03</td><td style="color:var(--text);font-weight:600">Test Cases Database</td><td><code>CSV</code></td><td>1 row = 1 chunk. Key-value field serialization preserving column associations.</td></tr>
+        <tr><td>04</td><td style="color:var(--text);font-weight:600">JIRA Tickets</td><td><code>JSON</code></td><td>1 ticket = 1 chunk. Bundles description, status, and comment threads.</td></tr>
+        <tr><td>05</td><td style="color:var(--text);font-weight:600">Company Guidelines</td><td><code>PDF / MD</code></td><td>Heading-aware recursive splitter. 512-token blocks with 15% overlap.</td></tr>
+        <tr><td>06</td><td style="color:var(--text);font-weight:600">Figma Layout Specs</td><td><code>Markdown</code></td><td>Section-based guidelines mapping UI elements and color tokens.</td></tr>
+        <tr><td>07</td><td style="color:var(--text);font-weight:600">Meeting Transcripts</td><td><code>Text</code></td><td>15-line speaker-turn sliding windows with 3-line overlaps.</td></tr>
+        <tr><td>08</td><td style="color:var(--text);font-weight:600">Lucid Flowcharts</td><td><code>Text Export</code></td><td>Element link and connection flow-based text splitting.</td></tr>
+        <tr><td>09</td><td style="color:var(--text);font-weight:600">PRDs / Requirements</td><td><code>PDF / MD</code></td><td>Page-by-page extraction. Citations carry original PDF page numbers.</td></tr>
+        <tr><td>10</td><td style="color:var(--text);font-weight:600">Jenkins Build Logs</td><td><code>Log</code></td><td>Error block extractor capturing stack traces + 5 surrounding context lines.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- /container -->
+</body>
+</html>
