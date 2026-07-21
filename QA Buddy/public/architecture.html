@@ -3,196 +3,326 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QABuddy.AI — Architecture & Technical Specifications</title>
-  <meta name="description" content="QABuddy.AI system architecture, Qdrant vector integration, data flow, use case diagram and technical specifications.">
+  <title>QABuddy.AI — Enterprise System Architecture & Design Specification</title>
+  <meta name="description" content="Comprehensive technical architecture, 4-tier system blueprint, Qdrant vector schema, hybrid retrieval pipeline, and interactive use case directory for QABuddy.AI.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg:         #FDF8F0;
-      --bg-card:    rgba(255, 248, 235, 0.96);
-      --bg-section: #F5EDE0;
-      --border:     rgba(139, 90, 43, 0.16);
-      --border-s:   rgba(139, 90, 43, 0.32);
-      --text:       #2C1A0E;
-      --text-2:     #6B4226;
-      --text-m:     #A0714F;
-      --primary:    #8B5E3C;
-      --p-glow:     rgba(139, 94, 60, 0.2);
-      --secondary:  #C47A2B;
-      --accent:     #5C3317;
-      --success:    #4A7C59;
+      --bg:             #FDF8F0;
+      --bg-card:        rgba(255, 250, 242, 0.94);
+      --bg-card-hover:  #FFFFFF;
+      --bg-subtle:      rgba(139, 94, 60, 0.05);
+      --bg-accent:      rgba(196, 122, 43, 0.08);
+      --border:         rgba(139, 90, 43, 0.18);
+      --border-strong:  rgba(139, 90, 43, 0.35);
+      --text-main:      #2C1A0E;
+      --text-body:      #5C3D26;
+      --text-muted:     #966A48;
+      --primary:        #8B5E3C;
+      --primary-dark:   #6B4226;
+      --secondary:      #C47A2B;
+      --accent:         #5C3317;
+      --success:        #3B6E47;
+      --success-bg:     rgba(59, 110, 71, 0.1);
+      --blue:           #3B627E;
+      --blue-bg:        rgba(59, 98, 126, 0.1);
+      --shadow-sm:      0 2px 10px rgba(44, 26, 14, 0.04);
+      --shadow-md:      0 8px 30px rgba(44, 26, 14, 0.07);
+      --shadow-glow:    0 0 24px rgba(139, 94, 60, 0.15);
+      --font-heading:   'Outfit', sans-serif;
+      --font-body:      'Plus Jakarta Sans', sans-serif;
+      --font-code:      'JetBrains Mono', monospace;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       background: var(--bg);
-      color: var(--text);
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--text-main);
+      font-family: var(--font-body);
       line-height: 1.65;
-      padding: 40px 20px 80px;
+      padding: 30px 20px 100px;
       background-image:
-        radial-gradient(ellipse at 8% 5%,  rgba(196,122,43,0.07) 0%, transparent 45%),
-        radial-gradient(ellipse at 92% 92%, rgba(139,94,60,0.06) 0%, transparent 45%);
+        radial-gradient(circle at 10% 8%,  rgba(196,122,43,0.06) 0%, transparent 40%),
+        radial-gradient(circle at 90% 92%, rgba(139,94,60,0.06) 0%, transparent 40%),
+        linear-gradient(180deg, rgba(253,248,240,0.8) 0%, rgba(253,248,240,1) 100%);
       background-attachment: fixed;
       -webkit-font-smoothing: antialiased;
     }
 
-    .container { max-width: 1100px; margin: 0 auto; }
+    .container { max-width: 1240px; margin: 0 auto; }
 
     /* ── Header ── */
-    header { text-align: center; margin-bottom: 48px; }
+    header {
+      text-align: center;
+      padding: 40px 20px 30px;
+      margin-bottom: 30px;
+      position: relative;
+    }
 
-    .logo-pill {
+    .badge-pill {
       display: inline-flex; align-items: center; gap: 8px;
-      padding: 6px 18px; margin-bottom: 18px;
-      background: rgba(139,94,60,0.1); border: 1px solid var(--border-s);
+      padding: 6px 18px; margin-bottom: 20px;
+      background: rgba(139,94,60,0.09); border: 1.5px solid var(--border-strong);
       border-radius: 30px; font-size: 0.78rem; font-weight: 700;
-      color: var(--primary); letter-spacing: 0.06em;
+      color: var(--primary); letter-spacing: 0.06em; text-transform: uppercase;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 10px var(--success);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.7; }
     }
 
     h1 {
-      font-family: 'Outfit', sans-serif; font-size: 2.6rem;
-      font-weight: 800; letter-spacing: -0.04em; margin-bottom: 12px;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 55%, #D4956A 100%);
+      font-family: var(--font-heading); font-size: 2.8rem;
+      font-weight: 800; letter-spacing: -0.04em; margin-bottom: 14px;
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 40%, var(--secondary) 85%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
 
-    .subtitle { font-size: 1rem; color: var(--text-m); max-width: 600px; margin: 0 auto; }
+    .subtitle {
+      font-size: 1.05rem; color: var(--text-muted); max-width: 720px; margin: 0 auto 24px;
+      line-height: 1.6;
+    }
 
-    /* ── Cards ── */
-    .card {
+    /* ── Quick Nav Bar ── */
+    .nav-pills {
+      display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .nav-pill {
+      padding: 8px 16px; border-radius: 20px;
+      background: #FFFFFF; border: 1.5px solid var(--border);
+      color: var(--text-body); font-size: 0.8rem; font-weight: 600;
+      text-decoration: none; transition: all 0.2s ease;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+
+    .nav-pill:hover {
+      border-color: var(--primary); color: var(--primary);
+      transform: translateY(-2px); box-shadow: var(--shadow-sm);
+    }
+
+    /* ── Cards & Section Layout ── */
+    .section-card {
       background: var(--bg-card);
       border: 1.5px solid var(--border);
-      border-radius: 20px; padding: 28px 26px; margin-bottom: 22px;
-      box-shadow: 0 4px 20px rgba(44,26,14,0.06);
+      border-radius: 24px;
+      padding: 36px 32px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-md);
+      transition: border-color 0.3s ease;
     }
 
-    h2 {
-      font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 700;
-      color: var(--primary); margin-bottom: 16px;
-      display: flex; align-items: center; gap: 9px;
+    .section-card:hover { border-color: var(--border-strong); }
+
+    .section-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 24px; padding-bottom: 16px;
+      border-bottom: 1.5px solid var(--border);
     }
 
-    h3 { font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 600; color: var(--text-2); margin: 18px 0 10px; }
-
-    /* ── Tables ── */
-    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; margin: 12px 0; }
-    th {
-      background: rgba(139,94,60,0.08); color: var(--primary);
-      padding: 10px 13px; text-align: left; font-weight: 700;
-      border-bottom: 2px solid rgba(139,94,60,0.15);
-      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em;
-    }
-    td { padding: 10px 13px; border-bottom: 1px solid var(--border); color: var(--text-2); line-height: 1.5; vertical-align: top; }
-    td:first-child { color: var(--secondary); font-weight: 700; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
-    tr:hover td { background: rgba(139,94,60,0.04); color: var(--text); }
-
-    /* ── Badges ── */
-    .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
-    .b {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 4px 11px; border-radius: 20px;
-      font-size: 0.72rem; font-weight: 700;
-    }
-    .b-brown  { background: rgba(139,94,60,0.1);  color: var(--primary);   border: 1px solid rgba(139,94,60,0.25); }
-    .b-green  { background: rgba(74,124,89,0.1);   color: var(--success);  border: 1px solid rgba(74,124,89,0.25); }
-    .b-amber  { background: rgba(196,122,43,0.1);  color: var(--secondary); border: 1px solid rgba(196,122,43,0.25); }
-
-    code {
-      font-family: 'JetBrains Mono', monospace;
-      background: rgba(139,94,60,0.09); color: var(--primary);
-      padding: 2px 6px; border-radius: 4px; font-size: 0.82em;
+    .section-title-box h2 {
+      font-family: var(--font-heading); font-size: 1.45rem; font-weight: 800;
+      color: var(--primary-dark); display: flex; align-items: center; gap: 10px;
+      letter-spacing: -0.02em;
     }
 
-    /* ── Code snippet box ── */
-    .code-box {
-      background: rgba(44, 26, 14, 0.04);
-      border: 1px solid var(--border-s);
-      border-radius: 10px;
-      padding: 14px 18px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.82rem;
-      color: var(--text);
-      line-height: 1.6;
-      margin-top: 12px;
+    .section-title-box p {
+      font-size: 0.86rem; color: var(--text-muted); margin-top: 4px;
     }
 
-    /* ── Elegant Use Case Directory Grid ── */
-    .roles-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 20px;
+    .tag-badge {
+      font-size: 0.72rem; font-weight: 700; padding: 4px 12px; border-radius: 20px;
+      letter-spacing: 0.04em; text-transform: uppercase;
     }
 
-    .role-card {
-      padding: 16px;
-      border-radius: 14px;
-      background: rgba(255,250,244,0.8);
+    .tag-brown { background: rgba(139,94,60,0.12); color: var(--primary); border: 1px solid rgba(139,94,60,0.25); }
+    .tag-amber { background: rgba(196,122,43,0.12); color: var(--secondary); border: 1px solid rgba(196,122,43,0.25); }
+    .tag-green { background: var(--success-bg); color: var(--success); border: 1px solid rgba(59,110,71,0.25); }
+    .tag-blue  { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(59,98,126,0.25); }
+
+    /* ── 4-Tier Layered Architecture Diagram ── */
+    .arch-layers-grid {
+      display: flex; flex-direction: column; gap: 18px;
+    }
+
+    .arch-layer {
+      background: #FFFFFF;
       border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 24px;
+      position: relative;
       transition: all 0.25s ease;
     }
 
-    .role-card:hover {
+    .arch-layer:hover {
       border-color: var(--primary);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(44,26,14,0.06);
+      box-shadow: var(--shadow-glow);
     }
 
-    .usecase-sys-box {
-      border: 2px dashed rgba(139,94,60,0.3);
-      border-radius: 18px;
-      padding: 26px 20px 20px;
-      position: relative;
-      background: rgba(255,250,244,0.6);
+    .layer-badge {
+      display: inline-block;
+      font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em;
+      padding: 3px 10px; border-radius: 6px; margin-bottom: 12px;
     }
 
-    .usecase-sys-label {
-      position: absolute; top: -12px; left: 18px;
-      background: var(--bg); padding: 2px 12px;
-      font-size: 0.72rem; font-weight: 700; color: var(--primary);
-      border-radius: 6px; border: 1px solid rgba(139,94,60,0.2);
-      letter-spacing: 0.05em;
+    .layer-1-badge { background: rgba(139,94,60,0.12); color: var(--primary); }
+    .layer-2-badge { background: rgba(59,98,126,0.12); color: var(--blue); }
+    .layer-3-badge { background: rgba(196,122,43,0.12); color: var(--secondary); }
+    .layer-4-badge { background: rgba(59,110,71,0.12); color: var(--success); }
+
+    .layer-title {
+      font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700;
+      color: var(--text-main); margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;
     }
 
-    .uc-card-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
+    .component-cards {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;
     }
 
-    .uc-card-item {
-      padding: 14px 16px;
-      background: #fff;
-      border: 1.5px solid var(--border);
+    .component-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
       border-radius: 12px;
+      padding: 14px 16px;
       transition: all 0.2s ease;
     }
 
-    .uc-card-item:hover {
+    .component-card:hover {
+      background: #FFFFFF;
       border-color: var(--primary);
-      box-shadow: 0 4px 14px rgba(44,26,14,0.06);
+      transform: translateY(-2px);
     }
 
-    /* ── Flow diagram ── */
-    .flow-row {
-      display: flex; align-items: center; gap: 8px;
-      flex-wrap: wrap; margin: 12px 0;
-    }
-    .flow-node {
-      padding: 8px 14px; border-radius: 9px; border: 1.5px solid;
-      font-size: 0.77rem; font-weight: 600;
-      display: inline-flex; align-items: center; gap: 5px;
-      white-space: nowrap;
-    }
-    .flow-arrow { color: var(--text-m); opacity: 0.5; font-size: 1rem; flex-shrink: 0; }
+    .comp-name { font-weight: 700; font-size: 0.88rem; color: var(--primary-dark); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+    .comp-desc { font-size: 0.78rem; color: var(--text-body); line-height: 1.45; }
+    .comp-tech { font-family: var(--font-code); font-size: 0.7rem; color: var(--secondary); margin-top: 6px; display: block; }
 
-    @media (max-width: 768px) {
-      .roles-grid, .uc-card-grid { grid-template-columns: 1fr; }
+    .layer-connector {
+      text-align: center; color: var(--primary); font-size: 1.4rem; opacity: 0.6; line-height: 1;
+      margin: -6px 0;
+    }
+
+    /* ── Use Case Directory Matrix ── */
+    .roles-selector {
+      display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+
+    .role-btn {
+      padding: 9px 18px; border-radius: 12px;
+      border: 1.5px solid var(--border); background: #FFFFFF;
+      color: var(--text-body); font-weight: 600; font-size: 0.82rem;
+      cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;
+    }
+
+    .role-btn.active {
+      background: var(--primary); color: #FFFFFF; border-color: var(--primary);
+      box-shadow: 0 4px 14px rgba(139,94,60,0.25);
+    }
+
+    .usecases-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    }
+
+    .usecase-box {
+      background: #FFFFFF;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 20px;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+
+    .usecase-box:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .uc-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .uc-title { font-weight: 700; font-size: 0.92rem; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+    .uc-actor { font-size: 0.7rem; font-weight: 700; padding: 2px 9px; border-radius: 20px; }
+
+    .uc-actor-qa { background: rgba(139,94,60,0.12); color: var(--primary); }
+    .uc-actor-dev { background: var(--blue-bg); color: var(--blue); }
+    .uc-actor-admin { background: rgba(196,122,43,0.12); color: var(--secondary); }
+
+    .uc-desc { font-size: 0.8rem; color: var(--text-body); line-height: 1.5; }
+    .uc-details {
+      margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--border);
+      font-size: 0.75rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px;
+    }
+
+    /* ── Vector Schema & Code Tabs ── */
+    .code-container {
+      background: #1E1711;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(139,94,60,0.3);
+      box-shadow: var(--shadow-md);
+    }
+
+    .code-tabs {
+      display: flex; background: #140E0A; border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .code-tab {
+      padding: 10px 18px; color: #A0714F; font-size: 0.78rem; font-weight: 600;
+      font-family: var(--font-code); cursor: pointer; border: none; background: transparent;
+      border-bottom: 2px solid transparent; transition: all 0.2s ease;
+    }
+
+    .code-tab.active {
+      color: #E8C17A; border-bottom-color: #C47A2B; background: rgba(255,255,255,0.03);
+    }
+
+    .code-block {
+      padding: 20px 24px; font-family: var(--font-code); font-size: 0.82rem;
+      color: #FDF8F0; line-height: 1.6; overflow-x: auto; white-space: pre;
+    }
+
+    .kw { color: #D4843A; font-weight: 700; }
+    .str { color: #7CB87A; }
+    .cm { color: #A0714F; font-style: italic; }
+    .num { color: #E8C17A; }
+
+    /* ── Table Styling ── */
+    .data-table {
+      width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 10px;
+    }
+
+    .data-table th {
+      background: rgba(139,94,60,0.08); color: var(--primary-dark);
+      padding: 12px 14px; text-align: left; font-weight: 700;
+      border-bottom: 2px solid var(--border-strong);
+      font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+
+    .data-table td {
+      padding: 12px 14px; border-bottom: 1px solid var(--border); color: var(--text-body);
+      vertical-align: top; line-height: 1.5;
+    }
+
+    .data-table tr:hover td { background: rgba(139,94,60,0.03); }
+
+    .src-num { font-family: var(--font-code); font-weight: 700; color: var(--secondary); }
+
+    @media (max-width: 900px) {
+      .usecases-grid { grid-template-columns: 1fr; }
+      .roles-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -201,181 +331,483 @@
 
   <!-- Header -->
   <header>
-    <div class="logo-pill">🤖 QABuddy.AI · Technical Architecture Specs</div>
-    <h1>System Architecture &amp; Specifications</h1>
-    <p class="subtitle">Multi-source RAG system powered by Qdrant (http://localhost:6333) and Groq LLMs</p>
+    <div class="badge-pill">
+      <span class="status-dot"></span> QABuddy.AI v1.0 · Technical Specifications &amp; Architecture
+    </div>
+    <h1>Enterprise System Architecture</h1>
+    <p class="subtitle">
+      A self-hosted, grounded QA intelligence platform built with Python, Qdrant vector retrieval (<code>http://localhost:6333</code>), hybrid dual embeddings (BGE-M3 1024d), cross-encoder reranking, and Groq high-speed LLMs.
+    </p>
+
+    <div class="nav-pills">
+      <a href="#layers" class="nav-pill">🏗️ System Layers</a>
+      <a href="#usecases" class="nav-pill">🎯 Actor Directory</a>
+      <a href="#schema" class="nav-pill">📦 Qdrant Payload Schema</a>
+      <a href="#code" class="nav-pill">💻 Client &amp; API Code</a>
+      <a href="#datasources" class="nav-pill">📁 10 Data Sources</a>
+    </div>
   </header>
 
-  <!-- Overview -->
-  <div class="card">
-    <h2>🤖 Overview &amp; Objectives</h2>
-    <p style="color:var(--text-2);font-size:.92rem;line-height:1.7">
-      <strong style="color:var(--text)">QABuddy.AI</strong> is a self-hosted, grounded QA assistant engineered for software QA teams.
-      It connects directly to a local Qdrant vector database server at <code>http://localhost:6333</code> and uses Groq high-speed LLMs.
-      Strict threshold gating guarantees factual precision — responding with <em style="color:var(--primary)">"information not found in knowledge base"</em> rather than generating hallucinations.
-    </p>
-    <div class="badges">
-      <span class="b b-brown">⚡ Groq LLM (llama-3.3-70b)</span>
-      <span class="b b-amber">📦 Qdrant Server (localhost:6333)</span>
-      <span class="b b-brown">🔢 Dense + Sparse Embeddings</span>
-      <span class="b b-green">✅ Citation Grounded</span>
-      <span class="b b-green">🛡️ Hallucination Gated</span>
+  <!-- 1. System Layers Architecture (4-Tier Diagram) -->
+  <div class="section-card" id="layers">
+    <div class="section-header">
+      <div class="section-title-box">
+        <h2>🏗️ 4-Tier Layered System Architecture</h2>
+        <p>End-to-end data flow from user UI to vector retrieval, reranking, and LLM synthesis</p>
+      </div>
+      <span class="tag-badge tag-brown">System Architecture</span>
+    </div>
+
+    <div class="arch-layers-grid">
+      <!-- Tier 1: Presentation -->
+      <div class="arch-layer">
+        <span class="layer-badge layer-1-badge">Tier 1: Presentation &amp; Inspection Layer</span>
+        <div class="layer-title">
+          <span>React + Vite Client Application</span>
+          <span style="font-size:0.75rem;color:var(--text-muted);font-weight:500">Port: 3001</span>
+        </div>
+        <div class="component-cards">
+          <div class="component-card">
+            <div class="comp-name">🤖 Grounded QA Chat UI</div>
+            <div class="comp-desc">Interactive query input with real-time SSE streaming answer display and source filter chips.</div>
+            <span class="comp-tech">App.jsx · Lucide React</span>
+          </div>
+          <div class="component-card">
+            <div class="comp-name">🔎 Visual Stage Inspector</div>
+            <div class="comp-desc">6-stage pipeline tracker inspecting query expansion, vector scores, rerank list, and threshold gating.</div>
+            <span class="comp-tech">StageInspector Component</span>
+          </div>
+          <div class="component-card">
+            <div class="comp-name">📐 Architecture Specs View</div>
+            <div class="comp-desc">Interactive Actor-Use Case directory matrix with expandable inputs/outputs and role filter pills.</div>
+            <span class="comp-tech">renderArchitecturePage()</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="layer-connector">↓</div>
+
+      <!-- Tier 2: Gateway & API -->
+      <div class="arch-layer">
+        <span class="layer-badge layer-2-badge">Tier 2: API Gateway &amp; Streaming Layer</span>
+        <div class="layer-title">
+          <span>Flask REST API &amp; Serverless Entrypoint</span>
+          <span style="font-size:0.75rem;color:var(--text-muted);font-weight:500">Port: 8000 / Vercel Serverless</span>
+        </div>
+        <div class="component-cards">
+          <div class="component-card">
+            <div class="comp-name">⚡ SSE Streamer (/api/chat)</div>
+            <div class="comp-desc">Server-Sent Events streaming token response line-by-line directly to client browser.</div>
+            <span class="comp-tech">server.py · Flask Response</span>
+          </div>
+          <div class="component-card">
+            <div class="comp-name">🌐 CORS &amp; Security Middleware</div>
+            <span class="comp-desc">Cross-Origin Resource Sharing handling and request validation.</span>
+            <span class="comp-tech">flask-cors · load_dotenv()</span>
+          </div>
+          <div class="component-card">
+            <div class="comp-name">📊 Health &amp; Status APIs</div>
+            <div class="comp-desc">Returns Qdrant connection state, vector points count, and data source file statistics.</div>
+            <span class="comp-tech">/api/status · /api/health</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="layer-connector">↓</div>
+
+      <!-- Tier 3: Core RAG Pipeline -->
+      <div class="arch-layer">
+        <span class="layer-badge layer-3-badge">Tier 3: Core RAG &amp; Intelligence Pipeline</span>
+        <div class="layer-title">
+          <span>Hybrid Dual-Vector Retrieval &amp; Groq Generation</span>
+          <span style="font-size:0.75rem;color:var(--text-muted);font-weight:500">retrieval.py · store.py</span>
+        </div>
+        <div class="component-cards">
+          <div class="component-card">
+            <div class="comp-name">🔀 Query Expansion</div>
+            <div class="comp-desc">Generates 3 semantic variations of user query via Groq LLM to increase recall across technical terms.</div>
+            <span class="comp-tech">rewrite_query()</span>
+          </div>
+          <div class="component-card">
+            <div class="comp-name">🔢 BGE-M3 Dual Embedder</div>
+            <div class="comp-desc">Generates 1024-dimensional dense vectors + token-level sparse TF-IDF weights for hybrid search.</div>
+            <span class="comp-tech">BGEM3Embedder Class</span>
+          </div>
+          <div class="component-card">
+            <div class="comp-name">🎯 Reciprocal Rank Fusion</div>
+            <div class="comp-desc">Combines dense cosine similarity + sparse term matching candidates into a single ranked list.</div>
+            <span class="comp-tech">reciprocal_rank_fusion()</span>
+          </div>
+          <div class="component-card">
+            <div class="comp-name">🛡️ Cross-Encoder Reranker</div>
+            <div class="comp-desc">Reranks top-12 candidates by deep context relevance score; filters chunks below score 0.22.</div>
+            <span class="comp-tech">bge-reranker-v2-m3</span>
+          </div>
+          <div class="component-card">
+            <div class="comp-name">🧠 Groq LLM Synthesis</div>
+            <div class="comp-desc">Streams cited answers using llama-3.3-70b-versatile with fallback to llama-3.1-8b-instant.</div>
+            <span class="comp-tech">Groq OpenAI API Client</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="layer-connector">↓</div>
+
+      <!-- Tier 4: Storage -->
+      <div class="arch-layer">
+        <span class="layer-badge layer-4-badge">Tier 4: Vector Storage &amp; Data Ingestion</span>
+        <div class="layer-title">
+          <span>Qdrant Vector Server &amp; QA Repositories</span>
+          <span style="font-size:0.75rem;color:var(--text-muted);font-weight:500">http://localhost:6333</span>
+        </div>
+        <div class="component-cards">
+          <div class="component-card">
+            <div class="comp-name">📦 Qdrant Vector Server</div>
+            <div class="comp-desc">Stores 1024d dense vectors + sparse indices inside <code>qabuddy_collection</code>. Supports payload filtering.</div>
+            <span class="comp-tech">QdrantClient(url="http://localhost:6333")</span>
+          </div>
+          <div class="component-card">
+            <div class="comp-name">📄 10 QA Data Sources</div>
+            <div class="comp-desc">Selenium Java POM, Playwright TS specs, CSV test cases, JIRA JSON, PRD PDFs, Jenkins logs.</div>
+            <span class="comp-tech">app/ingestion/parsers.py</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Qdrant Local Configuration Code -->
-  <div class="card">
-    <h2>📦 Qdrant Server Client Integration</h2>
-    <p style="color:var(--text-2);font-size:.88rem">
-      The Python backend initializes QdrantClient connecting to local server at <code>http://localhost:6333</code>:
-    </p>
-    <div class="code-box">
-<span style="color:#A0714F"># Python Qdrant Initialization</span>
-<span style="color:#8B5E3C;font-weight:700">from</span> qdrant_client <span style="color:#8B5E3C;font-weight:700">import</span> QdrantClient
+  <!-- 2. Interactive Role-Based Use Case Directory -->
+  <div class="section-card" id="usecases">
+    <div class="section-header">
+      <div class="section-title-box">
+        <h2>🎯 System Actor &amp; Use Case Mapping</h2>
+        <p>Click any use case to inspect its operational inputs, outputs, and system interaction flow</p>
+      </div>
+      <span class="tag-badge tag-amber">Use Case Directory</span>
+    </div>
 
-client = QdrantClient(url=<span style="color:#4A7C59">"http://localhost:6333"</span>)
-print(client.get_collections())
+    <!-- Role Filter Buttons -->
+    <div class="roles-selector">
+      <button class="role-btn active" onclick="filterRole('All', this)">🌐 All Roles (8)</button>
+      <button class="role-btn" onclick="filterRole('QA Engineer', this)">🧪 QA Engineer (4)</button>
+      <button class="role-btn" onclick="filterRole('Developer', this)">💻 Developer (2)</button>
+      <button class="role-btn" onclick="filterRole('Admin', this)">⚙️ Admin (2)</button>
+    </div>
 
-<span style="color:#A0714F"># API Health check</span>
-<span style="color:#8B5E3C;font-weight:700">curl</span> -X GET <span style="color:#4A7C59">"http://localhost:6333"</span>
+    <div class="usecases-grid">
+      <!-- UC 1 -->
+      <div class="usecase-box" data-role="QA Engineer" onclick="toggleDetails(this)">
+        <div class="uc-top">
+          <div class="uc-title"><span>🧪</span> Ask About Test Failures</div>
+          <span class="uc-actor uc-actor-qa">QA Engineer</span>
+        </div>
+        <div class="uc-desc">Query Jenkins build logs and test execution histories to diagnose failure stack traces.</div>
+        <div class="uc-details">
+          <div>📥 <strong>Inputs:</strong> Build numbers, exception stack traces, test method names</div>
+          <div>📤 <strong>Outputs:</strong> Root cause analysis with file line citations</div>
+        </div>
+      </div>
+
+      <!-- UC 2 -->
+      <div class="usecase-box" data-role="QA Engineer" onclick="toggleDetails(this)">
+        <div class="uc-top">
+          <div class="uc-title"><span>🎫</span> Query JIRA Tickets &amp; Bugs</div>
+          <span class="uc-actor uc-actor-qa">QA Engineer</span>
+        </div>
+        <div class="uc-desc">Search past bug reports, resolution steps, and comment threads across sprint histories.</div>
+        <div class="uc-details">
+          <div>📥 <strong>Inputs:</strong> Bug keywords, component names, defect IDs</div>
+          <div>📤 <strong>Outputs:</strong> Relevant JIRA tickets with status &amp; comment summaries</div>
+        </div>
+      </div>
+
+      <!-- UC 3 -->
+      <div class="usecase-box" data-role="Developer" onclick="toggleDetails(this)">
+        <div class="uc-top">
+          <div class="uc-title"><span>💻</span> Search POM Framework Code</div>
+          <span class="uc-actor uc-actor-dev">Developer</span>
+        </div>
+        <div class="uc-desc">Retrieve Selenium Java or Playwright TypeScript page objects, locators, and spec files.</div>
+        <div class="uc-details">
+          <div>📥 <strong>Inputs:</strong> Page object names, locator strategies, helper methods</div>
+          <div>📤 <strong>Outputs:</strong> Exact code blocks with repository path &amp; line ranges</div>
+        </div>
+      </div>
+
+      <!-- UC 4 -->
+      <div class="usecase-box" data-role="Admin" onclick="toggleDetails(this)">
+        <div class="uc-top">
+          <div class="uc-title"><span>⚙️</span> Ingest &amp; Index Documents</div>
+          <span class="uc-actor uc-actor-admin">Admin</span>
+        </div>
+        <div class="uc-desc">Process repos, PRDs, and build logs into Qdrant vector store running at http://localhost:6333.</div>
+        <div class="uc-details">
+          <div>📥 <strong>Inputs:</strong> Directory paths, file format configs, chunk sizes</div>
+          <div>📤 <strong>Outputs:</strong> Indexed Qdrant collection with point counts</div>
+        </div>
+      </div>
+
+      <!-- UC 5 -->
+      <div class="usecase-box" data-role="QA Engineer" onclick="toggleDetails(this)">
+        <div class="uc-top">
+          <div class="uc-title"><span>🛡️</span> Review Grounded Citations</div>
+          <span class="uc-actor uc-actor-qa">QA Engineer</span>
+        </div>
+        <div class="uc-desc">Verify generated answers against source files using bracketed [1], [2] metadata tags.</div>
+        <div class="uc-details">
+          <div>📥 <strong>Inputs:</strong> LLM streaming answer tokens</div>
+          <div>📤 <strong>Outputs:</strong> Clickable citation badges with file line numbers &amp; page numbers</div>
+        </div>
+      </div>
+
+      <!-- UC 6 -->
+      <div class="usecase-box" data-role="QA Engineer" onclick="toggleDetails(this)">
+        <div class="uc-top">
+          <div class="uc-title"><span>🎯</span> Filter by QA Source Type</div>
+          <span class="uc-actor uc-actor-qa">QA Engineer</span>
+        </div>
+        <div class="uc-desc">Restrict semantic vector search to specific repositories like POM frameworks, PRDs, or JIRA.</div>
+        <div class="uc-details">
+          <div>📥 <strong>Inputs:</strong> Source category chip selection (e.g. 01_selenium_framework)</div>
+          <div>📤 <strong>Outputs:</strong> Filtered candidate payload set in Qdrant vector query</div>
+        </div>
+      </div>
+
+      <!-- UC 7 -->
+      <div class="usecase-box" data-role="Developer" onclick="toggleDetails(this)">
+        <div class="uc-top">
+          <div class="uc-title"><span>🔍</span> Inspect RAG Pipeline &amp; Vectors</div>
+          <span class="uc-actor uc-actor-dev">Developer</span>
+        </div>
+        <div class="uc-desc">Analyze vector retrieval scores, reranking candidate lists, and threshold gating.</div>
+        <div class="uc-details">
+          <div>📥 <strong>Inputs:</strong> Pipeline stage selection click</div>
+          <div>📤 <strong>Outputs:</strong> Candidate relevance scores, search latency, gating decision</div>
+        </div>
+      </div>
+
+      <!-- UC 8 -->
+      <div class="usecase-box" data-role="Admin" onclick="toggleDetails(this)">
+        <div class="uc-top">
+          <div class="uc-title"><span>🔧</span> Configure Qdrant &amp; Credentials</div>
+          <span class="uc-actor uc-actor-admin">Admin</span>
+        </div>
+        <div class="uc-desc">Manage Qdrant server connection, vector dimensions, chunk size, and Groq API keys.</div>
+        <div class="uc-details">
+          <div>📥 <strong>Inputs:</strong> Environment variables (.env), chunk overlap parameters</div>
+          <div>📤 <strong>Outputs:</strong> Updated pipeline store config &amp; status metrics</div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Use Case Diagram Directory -->
-  <div class="card">
-    <h2>🎯 Actor &amp; Use Case Mapping</h2>
-    <p style="color:var(--text-m);font-size:.86rem;margin-bottom:18px">
-      Structured interaction boundary for QA Engineers, Developers, and System Admins
-    </p>
-
-    <!-- Role summary cards -->
-    <div class="roles-grid">
-      <div class="role-card">
-        <div style="font-size:1.4rem;margin-bottom:6px">🧪</div>
-        <div style="font-weight:700;color:#8B5E3C;font-size:0.92rem;margin-bottom:4px">QA Engineer</div>
-        <div style="font-size:0.78rem;color:var(--text-m);line-height:1.45">Queries test runs, JIRA defects, requirement docs, and verifies grounded citations.</div>
+  <!-- 3. Qdrant Schema & Python Code Specification -->
+  <div class="section-card" id="code">
+    <div class="section-header">
+      <div class="section-title-box">
+        <h2>📦 Qdrant Client Integration &amp; Payload Schema</h2>
+        <p>Python connection code (`http://localhost:6333`) and Qdrant Point payload structure</p>
       </div>
-      <div class="role-card">
-        <div style="font-size:1.4rem;margin-bottom:6px">💻</div>
-        <div style="font-weight:700;color:#4A6E8A;font-size:0.92rem;margin-bottom:4px">Developer</div>
-        <div style="font-size:0.78rem;color:var(--text-m);line-height:1.45">Searches Selenium Java &amp; Playwright TypeScript POM frameworks and inspects vector pipeline traces.</div>
-      </div>
-      <div class="role-card">
-        <div style="font-size:1.4rem;margin-bottom:6px">⚙️</div>
-        <div style="font-weight:700;color:#C47A2B;font-size:0.92rem;margin-bottom:4px">Admin</div>
-        <div style="font-size:0.78rem;color:var(--text-m);line-height:1.45">Manages document ingestion into Qdrant server at http://localhost:6333 and configures chunk params.</div>
-      </div>
+      <span class="tag-badge tag-green">Qdrant Code</span>
     </div>
 
-    <!-- System boundary -->
-    <div class="usecase-sys-box">
-      <div class="usecase-sys-label">QABuddy.AI System Boundary</div>
+    <div class="code-container">
+      <div class="code-tabs">
+        <button class="code-tab active" onclick="switchTab(0, this)">Python QdrantClient</button>
+        <button class="code-tab" onclick="switchTab(1, this)">Qdrant Payload JSON Schema</button>
+        <button class="code-tab" onclick="switchTab(2, this)">cURL Health Check API</button>
+      </div>
 
-      <div class="uc-card-grid">
-        <div class="uc-card-item">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-            <div style="font-weight:700;font-size:0.86rem">🧪 Ask About Test Failures</div>
-            <span class="b b-brown">QA Engineer</span>
-          </div>
-          <div style="font-size:0.78rem;color:var(--text-2)">Query Jenkins build logs and test execution histories to diagnose failure stack traces.</div>
-        </div>
+      <!-- Tab 0: Python -->
+      <div class="code-block" id="tab-0">
+<span class="cm"># Python backend connection to local Qdrant server</span>
+<span class="kw">from</span> qdrant_client <span class="kw">import</span> QdrantClient
+<span class="kw">from</span> qdrant_client.http <span class="kw">import</span> models
 
-        <div class="uc-card-item">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-            <div style="font-weight:700;font-size:0.86rem">🎫 Query JIRA Tickets &amp; Bugs</div>
-            <span class="b b-brown">QA Engineer</span>
-          </div>
-          <div style="font-size:0.78rem;color:var(--text-2)">Search past bug reports, resolution steps, and comment threads across sprint histories.</div>
-        </div>
+<span class="cm"># Initialize Qdrant client targeting local server port 6333</span>
+client = QdrantClient(url=<span class="str">"http://localhost:6333"</span>, timeout=<span class="num">3.0</span>)
 
-        <div class="uc-card-item">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-            <div style="font-weight:700;font-size:0.86rem">💻 Search POM Framework Code</div>
-            <span class="b" style="background:rgba(74,110,138,0.1);color:#4A6E8A;border:1px solid rgba(74,110,138,0.25)">Developer</span>
-          </div>
-          <div style="font-size:0.78rem;color:var(--text-2)">Retrieve Selenium Java or Playwright TypeScript page objects, locators, and spec files.</div>
-        </div>
+<span class="cm"># Recreate collection with dual vector configuration (1024d Dense + Sparse)</span>
+client.recreate_collection(
+    collection_name=<span class="str">"qabuddy_collection"</span>,
+    vectors_config={
+        <span class="str">"dense"</span>: models.VectorParams(size=<span class="num">1024</span>, distance=models.Distance.COSINE)
+    },
+    sparse_vectors_config={
+        <span class="str">"sparse"</span>: models.SparseVectorParams(index=models.SparseIndexParams(on_disk=<span class="kw">True</span>))
+    }
+)
 
-        <div class="uc-card-item">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-            <div style="font-weight:700;font-size:0.86rem">⚙️ Ingest &amp; Index Documents</div>
-            <span class="b b-amber">Admin</span>
-          </div>
-          <div style="font-size:0.78rem;color:var(--text-2)">Process repos, PRDs, and logs into Qdrant vector store running at http://localhost:6333.</div>
-        </div>
+<span class="cm"># Print collection stats</span>
+collections = client.get_collections()
+print(<span class="str">"Connected Qdrant Collections:"</span>, collections)
+      </div>
 
-        <div class="uc-card-item">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-            <div style="font-weight:700;font-size:0.86rem">🛡️ Review Grounded Citations</div>
-            <span class="b b-brown">QA Engineer</span>
-          </div>
-          <div style="font-size:0.78rem;color:var(--text-2)">Verify generated answers against source files using bracketed [1], [2] metadata tags.</div>
-        </div>
+      <!-- Tab 1: Payload JSON -->
+      <div class="code-block" id="tab-1" style="display:none;">
+{
+  <span class="kw">"id"</span>: <span class="str">"550e8400-e29b-41d4-a716-446655440000"</span>,
+  <span class="kw">"vector"</span>: {
+    <span class="kw">"dense"</span>: [<span class="num">0.024</span>, -<span class="num">0.115</span>, <span class="num">0.892</span>, <span class="cm">/* ... 1024 float dimensions */</span>],
+    <span class="kw">"sparse"</span>: {
+      <span class="kw">"indices"</span>: [<span class="num">1042</span>, <span class="num">8821</span>, <span class="num">94012</span>],
+      <span class="kw">"values"</span>: [<span class="num">0.42</span>, <span class="num">0.81</span>, <span class="num">0.15</span>]
+    }
+  },
+  <span class="kw">"payload"</span>: {
+    <span class="kw">"text"</span>: <span class="str">"public class TestVWOLogin_03 extends BaseTest { @Test public void testLogin() {...} }"</span>,
+    <span class="kw">"source_type"</span>: <span class="str">"01_selenium_framework"</span>,
+    <span class="kw">"path"</span>: <span class="str">"src/test/java/com/vwo/tests/TestVWOLogin_03.java"</span>,
+    <span class="kw">"line_start"</span>: <span class="num">14</span>,
+    <span class="kw">"line_end"</span>: <span class="num">42</span>,
+    <span class="kw">"sha256"</span>: <span class="str">"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"</span>
+  }
+}
+      </div>
 
-        <div class="uc-card-item">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-            <div style="font-weight:700;font-size:0.86rem">🔍 Inspect RAG Pipeline &amp; Vectors</div>
-            <span class="b" style="background:rgba(74,110,138,0.1);color:#4A6E8A;border:1px solid rgba(74,110,138,0.25)">Developer</span>
-          </div>
-          <div style="font-size:0.78rem;color:var(--text-2)">Analyze vector retrieval scores, reranking candidate lists, and gating thresholds.</div>
-        </div>
+      <!-- Tab 2: cURL -->
+      <div class="code-block" id="tab-2" style="display:none;">
+<span class="cm"># 1. Qdrant Server Health Check</span>
+curl -X GET <span class="str">"http://localhost:6333"</span>
+
+<span class="cm"># 2. List Qdrant Collections</span>
+curl -X GET <span class="str">"http://localhost:6333/collections"</span>
+
+<span class="cm"># 3. QA Buddy API Chat Query Stream</span>
+curl -X POST <span class="str">"http://127.0.0.1:8000/api/chat"</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"query": "How does POM pattern wait strategy work?", "source_filter": "01_selenium_framework"}'</span>
       </div>
     </div>
   </div>
 
-  <!-- Data Flow Architecture -->
-  <div class="card">
-    <h2>🏗️ Data Flow Architecture</h2>
-
-    <h3>📥 Ingestion Pipeline (Offline CLI)</h3>
-    <div class="flow-row">
-      <div class="flow-node" style="border-color:rgba(139,94,60,.4);background:rgba(139,94,60,.07);color:var(--primary)">📄 PDF / Code Files</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-node" style="border-color:rgba(196,122,43,.4);background:rgba(196,122,43,.07);color:var(--secondary)">🔍 Parser &amp; Splitter</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-node" style="border-color:rgba(139,94,60,.35);background:rgba(139,94,60,.04);color:var(--text-2)">✂️ Chunking (500 chars)</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-node" style="border-color:rgba(92,51,23,.4); background:rgba(92,51,23,.06); color:var(--accent)">🔢 Nomic Embed</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-node" style="border-color:rgba(74,124,89,.4);background:rgba(74,124,89,.07);color:var(--success)">💾 Qdrant (localhost:6333)</div>
+  <!-- 4. 10 QA Data Sources & Chunking Strategy Matrix -->
+  <div class="section-card" id="datasources">
+    <div class="section-header">
+      <div class="section-title-box">
+        <h2>📁 10 Data Sources &amp; Chunking Strategies</h2>
+        <p>Specific parsing strategies, chunk token sizes, and payload attributes per QA source</p>
+      </div>
+      <span class="tag-badge tag-blue">Data Pipeline</span>
     </div>
 
-    <h3>🔎 Query Pipeline (Live Server)</h3>
-    <div class="flow-row">
-      <div class="flow-node" style="border-color:rgba(139,94,60,.4);background:rgba(139,94,60,.07);color:var(--primary)">👤 User Query</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-node" style="border-color:rgba(196,122,43,.4);background:rgba(196,122,43,.07);color:var(--secondary)">🔢 Embed Query</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-node" style="border-color:rgba(139,94,60,.35);background:rgba(139,94,60,.04);color:var(--text-2)">🔍 Qdrant Search</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-node" style="border-color:rgba(92,51,23,.4); background:rgba(92,51,23,.06); color:var(--accent)">📋 Top-K Chunks</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-node" style="border-color:rgba(74,124,89,.4);background:rgba(74,124,89,.07);color:var(--success)">🧠 Groq LLM</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-node" style="border-color:rgba(139,94,60,.4);background:rgba(139,94,60,.1); color:var(--primary)">✅ Cited Answer</div>
-    </div>
-  </div>
-
-  <!-- Data Sources Table -->
-  <div class="card">
-    <h2>📁 Data Sources &amp; Chunking Strategies</h2>
-    <table>
-      <thead><tr><th>#</th><th>Source</th><th>Format</th><th>Chunking Strategy</th></tr></thead>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Source Name</th>
+          <th>Format</th>
+          <th>Parsing Strategy &amp; Chunking Rule</th>
+          <th>Payload Attributes</th>
+        </tr>
+      </thead>
       <tbody>
-        <tr><td>01</td><td style="color:var(--text);font-weight:600">Selenium POM Repo</td><td><code>Java</code></td><td>Class/Method scope parsing. Separate chunks per method with header paths.</td></tr>
-        <tr><td>02</td><td style="color:var(--text);font-weight:600">Playwright POM Repo</td><td><code>TS/JS</code></td><td>Block scope parsing. Splits by <code>describe</code> / <code>test</code> spec definitions.</td></tr>
-        <tr><td>03</td><td style="color:var(--text);font-weight:600">Test Cases Database</td><td><code>CSV</code></td><td>1 row = 1 chunk. Key-value field serialization preserving column associations.</td></tr>
-        <tr><td>04</td><td style="color:var(--text);font-weight:600">JIRA Tickets</td><td><code>JSON</code></td><td>1 ticket = 1 chunk. Bundles description, status, and comment threads.</td></tr>
-        <tr><td>05</td><td style="color:var(--text);font-weight:600">Company Guidelines</td><td><code>PDF / MD</code></td><td>Heading-aware recursive splitter. 512-token blocks with 15% overlap.</td></tr>
-        <tr><td>06</td><td style="color:var(--text);font-weight:600">Figma Layout Specs</td><td><code>Markdown</code></td><td>Section-based guidelines mapping UI elements and color tokens.</td></tr>
-        <tr><td>07</td><td style="color:var(--text);font-weight:600">Meeting Transcripts</td><td><code>Text</code></td><td>15-line speaker-turn sliding windows with 3-line overlaps.</td></tr>
-        <tr><td>08</td><td style="color:var(--text);font-weight:600">Lucid Flowcharts</td><td><code>Text Export</code></td><td>Element link and connection flow-based text splitting.</td></tr>
-        <tr><td>09</td><td style="color:var(--text);font-weight:600">PRDs / Requirements</td><td><code>PDF / MD</code></td><td>Page-by-page extraction. Citations carry original PDF page numbers.</td></tr>
-        <tr><td>10</td><td style="color:var(--text);font-weight:600">Jenkins Build Logs</td><td><code>Log</code></td><td>Error block extractor capturing stack traces + 5 surrounding context lines.</td></tr>
+        <tr>
+          <td class="src-num">01</td>
+          <td style="font-weight:700;color:var(--text-main)">Selenium POM Repo</td>
+          <td><code>.java</code></td>
+          <td>Class &amp; Method block scope parsing. Each `@Test` method or Page Object class becomes a separate chunk.</td>
+          <td><code>path, line_start, line_end</code></td>
+        </tr>
+        <tr>
+          <td class="src-num">02</td>
+          <td style="font-weight:700;color:var(--text-main)">Playwright Spec Repo</td>
+          <td><code>.ts / .js</code></td>
+          <td>Block-level AST parsing. Splits by <code>describe()</code> and <code>test()</code> spec definitions.</td>
+          <td><code>path, line_start, line_end</code></td>
+        </tr>
+        <tr>
+          <td class="src-num">03</td>
+          <td style="font-weight:700;color:var(--text-main)">Test Cases Database</td>
+          <td><code>.csv</code></td>
+          <td>Row-level serialization. 1 row = 1 chunk preserving column headers (ID, Title, Steps, Expected).</td>
+          <td><code>tc_id, module, priority</code></td>
+        </tr>
+        <tr>
+          <td class="src-num">04</td>
+          <td style="font-weight:700;color:var(--text-main)">JIRA Ticket Exports</td>
+          <td><code>.json</code></td>
+          <td>Object mapping. 1 ticket = 1 chunk bundling issue key, description, resolution, and comments.</td>
+          <td><code>ticket_key, status, assignee</code></td>
+        </tr>
+        <tr>
+          <td class="src-num">05</td>
+          <td style="font-weight:700;color:var(--text-main)">Company QA Guidelines</td>
+          <td><code>.pdf / .md</code></td>
+          <td>Heading-aware recursive text splitter. 512-token blocks with 15% sliding overlap.</td>
+          <td><code>path, page, heading</code></td>
+        </tr>
+        <tr>
+          <td class="src-num">06</td>
+          <td style="font-weight:700;color:var(--text-main)">Figma Layout Specs</td>
+          <td><code>.md</code></td>
+          <td>Section-based guideline parser mapping UI components, color tokens, and layout margins.</td>
+          <td><code>component_name, spec_id</code></td>
+        </tr>
+        <tr>
+          <td class="src-num">07</td>
+          <td style="font-weight:700;color:var(--text-main)">Meeting Transcripts</td>
+          <td><code>.txt</code></td>
+          <td>15-line speaker turn sliding window with 3-line overlap preserving dialogue context.</td>
+          <td><code>date, speakers</code></td>
+        </tr>
+        <tr>
+          <td class="src-num">08</td>
+          <td style="font-weight:700;color:var(--text-main)">Lucid Flowchart Exports</td>
+          <td><code>.txt / .json</code></td>
+          <td>Diagram connection flow parsing. Maps element nodes, links, and conditional decisions.</td>
+          <td><code>diagram_id, flow_name</code></td>
+        </tr>
+        <tr>
+          <td class="src-num">09</td>
+          <td style="font-weight:700;color:var(--text-main)">PRDs &amp; Requirements</td>
+          <td><code>.pdf / .md</code></td>
+          <td>Page-by-page PDF extraction. Answer citations preserve original PDF page numbers.</td>
+          <td><code>doc_title, page</code></td>
+        </tr>
+        <tr>
+          <td class="src-num">10</td>
+          <td style="font-weight:700;color:var(--text-main)">Jenkins Build Logs</td>
+          <td><code>.log</code></td>
+          <td>Error block extractor capturing stack traces + 5 surrounding context lines.</td>
+          <td><code>build_id, job_name, status</code></td>
+        </tr>
       </tbody>
     </table>
   </div>
 
-</div><!-- /container -->
+</div>
+
+<script>
+  function filterRole(role, btn) {
+    document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    document.querySelectorAll('.usecase-box').forEach(box => {
+      if (role === 'All' || box.getAttribute('data-role') === role) {
+        box.style.display = 'block';
+      } else {
+        box.style.display = 'none';
+      }
+    });
+  }
+
+  function toggleDetails(box) {
+    const details = box.querySelector('.uc-details');
+    if (details) {
+      const isVisible = details.style.display === 'flex';
+      details.style.display = isVisible ? 'none' : 'flex';
+    }
+  }
+
+  function switchTab(index, btn) {
+    document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    
+    document.querySelectorAll('.code-block').forEach((b, i) => {
+      b.style.display = i === index ? 'block' : 'none';
+    });
+  }
+</script>
 </body>
 </html>
