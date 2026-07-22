@@ -68,6 +68,9 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  min-width: 0;
 }
 
 body {
@@ -81,7 +84,7 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Crisp Sharp Headings */
+/* Crisp Sharp Headings with Strict Overflow Break */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-sans);
   letter-spacing: -0.02em;
@@ -89,6 +92,14 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary);
   transform: none !important;
   filter: none !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+p, span, div, a, code {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 /* Scrollbars */
@@ -107,7 +118,7 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--accent-cyan);
 }
 
-/* Crisp Ocean Cards (No GPU Blur) */
+/* Crisp Ocean Cards (No Text Overflow) */
 .ocean-card, .tile-3d, .card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -117,6 +128,9 @@ h1, h2, h3, h4, h5, h6 {
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   position: relative;
   transform: none;
+  overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 [data-theme="dark"] .ocean-card, [data-theme="dark"] .tile-3d {
@@ -150,6 +164,8 @@ h1, h2, h3, h4, h5, h6 {
   cursor: pointer;
   border: none;
   transition: all 0.15s ease;
+  flex-shrink: 0;
+  max-width: 100%;
 }
 
 .btn-primary {
@@ -231,6 +247,7 @@ label {
   transition: border-color 0.2s, box-shadow 0.2s;
   transform: none !important;
   filter: none !important;
+  box-sizing: border-box;
 }
 
 [data-theme="dark"] .input-field {
@@ -262,6 +279,8 @@ label {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  max-width: 100%;
+  white-space: nowrap;
 }
 
 .badge-local {
@@ -303,30 +322,25 @@ label {
   color: #f8fafc;
   overflow-x: auto;
   white-space: pre-wrap;
+  word-break: break-all;
   line-height: 1.6;
+  max-width: 100%;
 }
 
 code {
   font-family: var(--font-mono);
+  word-break: break-all;
 }
 
-/* Pulsing Status Dot */
-.status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.status-dot.green {
-  background: var(--accent-emerald);
-  box-shadow: 0 0 8px var(--accent-emerald);
-}
-.status-dot.amber {
-  background: var(--accent-amber);
-  box-shadow: 0 0 8px var(--accent-amber);
-}
-.status-dot.red {
-  background: var(--accent-rose);
-  box-shadow: 0 0 8px var(--accent-rose);
+/* Responsive Media Query Fixes */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 1rem !important;
+  }
+  nav {
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
 }

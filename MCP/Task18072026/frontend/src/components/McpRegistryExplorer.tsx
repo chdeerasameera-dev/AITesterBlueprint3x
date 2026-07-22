@@ -274,7 +274,7 @@ export const McpRegistryExplorer: React.FC<McpRegistryExplorerProps> = ({ onImpo
 
       {/* Registry Server Cards Grid */}
       {!isLoading && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "1.5rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.5rem" }}>
           {filteredServers.map((item) => {
             const s = item.server;
             const meta = item._meta?.["io.modelcontextprotocol.registry/official"];
@@ -293,12 +293,14 @@ export const McpRegistryExplorer: React.FC<McpRegistryExplorerProps> = ({ onImpo
                   justifyContent: "space-between",
                   borderColor: isSelected ? "var(--accent-cyan)" : "var(--border-color)",
                   boxShadow: isSelected ? "var(--shadow-glow)" : undefined,
-                  background: isSelected ? "rgba(0, 242, 254, 0.08)" : undefined
+                  background: isSelected ? "rgba(0, 242, 254, 0.08)" : undefined,
+                  maxWidth: "100%",
+                  overflow: "hidden"
                 }}
               >
                 <div>
                   {/* Card Top Badges */}
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem", flexWrap: "wrap", gap: "0.5rem" }}>
                     <span className={`badge ${isRemote ? "badge-remote" : "badge-local"}`}>
                       {isRemote ? "Remote Streamable" : "Local stdio"}
                     </span>
@@ -308,15 +310,15 @@ export const McpRegistryExplorer: React.FC<McpRegistryExplorerProps> = ({ onImpo
                   </div>
 
                   {/* Title & Name */}
-                  <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "0.3rem" }}>
+                  <h3 style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "0.3rem", wordBreak: "break-word", overflowWrap: "anywhere", hyphens: "auto" }}>
                     {s.title || s.name}
                   </h3>
-                  <div style={{ fontSize: "0.78rem", fontFamily: "var(--font-mono)", color: "var(--accent-cyan)", marginBottom: "0.75rem", wordBreak: "break-all" }}>
+                  <div style={{ fontSize: "0.78rem", fontFamily: "var(--font-mono)", color: "var(--accent-cyan)", marginBottom: "0.75rem", wordBreak: "break-all", overflowWrap: "anywhere" }}>
                     {s.name}
                   </div>
 
                   {/* Description */}
-                  <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.5, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden", marginBottom: "1rem" }}>
+                  <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.5, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden", marginBottom: "1rem", wordBreak: "break-word", overflowWrap: "anywhere" }}>
                     {s.description || "No description provided by publisher."}
                   </p>
                 </div>
