@@ -19,6 +19,10 @@ app.get("/health", (req, res) => {
   res.json({ status: "ok", app: "MCP Inspector Explorer Backend", timestamp: new Date().toISOString() });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 MCP Inspector Explorer Backend running on http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => {
+    console.log(`🚀 MCP Inspector Explorer Backend running on http://localhost:${PORT}`);
+  });
+}
+
+export default app;
