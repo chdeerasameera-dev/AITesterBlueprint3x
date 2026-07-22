@@ -11,11 +11,13 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 
-// API Router
+// API Routers for both standalone & Vercel serverless multi-service routing
 app.use("/api", apiRoutes);
+app.use("/_/backend/api", apiRoutes);
+app.use("/_/backend", apiRoutes);
 
 // Root healthcheck
-app.get("/health", (req, res) => {
+app.get(["/health", "/api/health", "/_/backend/health"], (req, res) => {
   res.json({ status: "ok", app: "MCP Inspector Explorer Backend", timestamp: new Date().toISOString() });
 });
 

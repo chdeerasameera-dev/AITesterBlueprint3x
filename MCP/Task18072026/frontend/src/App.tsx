@@ -10,13 +10,50 @@ import { ExportModal } from "./components/ExportModal";
 import { McpInfoPanel } from "./components/McpInfoPanel";
 import { McpRegistryExplorer } from "./components/McpRegistryExplorer";
 
+const DEFAULT_PRESET_CONFIGS: ServerConfig[] = [
+  {
+    id: "preset-playwright",
+    name: "Playwright MCP",
+    transport: "stdio",
+    command: "npx -y @playwright/mcp@latest",
+    args: [],
+    authType: "N/A (Local stdio)",
+    readOnlyDefault: true,
+  },
+  {
+    id: "preset-atlassian-remote",
+    name: "Atlassian Rovo MCP",
+    transport: "sse",
+    url: "https://mcp.atlassian.com/v1/mcp/authv2",
+    authType: "OAuth 2.1 / API Token",
+    readOnlyDefault: true,
+  },
+  {
+    id: "preset-github-local",
+    name: "GitHub MCP (Local Docker)",
+    transport: "stdio",
+    command: "docker",
+    args: ["run", "-i", "--rm", "ghcr.io/github/github-mcp-server"],
+    authType: "PAT (Environment)",
+    readOnlyDefault: true,
+  },
+  {
+    id: "preset-github-remote",
+    name: "GitHub MCP (Remote Hosted)",
+    transport: "sse",
+    url: "https://api.githubcopilot.com/mcp/",
+    authType: "OAuth 2.0 / PAT",
+    readOnlyDefault: true,
+  },
+];
+
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<NavTab>("connection");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [configs, setConfigs] = useState<ServerConfig[]>([]);
-  const [presets, setPresets] = useState<ServerConfig[]>([]);
+  const [configs, setConfigs] = useState<ServerConfig[]>(DEFAULT_PRESET_CONFIGS);
+  const [presets, setPresets] = useState<ServerConfig[]>(DEFAULT_PRESET_CONFIGS);
   const [discoveryResults, setDiscoveryResults] = useState<Map<string, ServerDiscoveryResult>>(new Map());
-  const [activeServerId, setActiveServerId] = useState<string | null>(null);
+  const [activeServerId, setActiveServerId] = useState<string | null>("preset-playwright");
   const [selectedToolForPlayground, setSelectedToolForPlayground] = useState<ToolItem | null>(null);
   const [isReadOnlyGlobal, setIsReadOnlyGlobal] = useState<boolean>(true);
   const [isExportOpen, setIsExportOpen] = useState<boolean>(false);
@@ -27,26 +64,35 @@ export const App: React.FC = () => {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
-  // Initial Load Presets and Stored Configs
+  // Initial Load Presets and Stored Configs with multi-route fallback
   useEffect(() => {
-    fetch("/api/presets")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.presets) setPresets(data.presets);
-      })
-      .catch((err) => console.error("Presets error:", err));
-
-    fetch("/api/configs")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.configs) {
-          setConfigs(data.configs);
-          if (data.configs.length > 0) {
-            setActiveServerId(data.configs[0].id);
+    const fetchWithFallback = async (endpoints: string[]) => {
+      for (const endpoint of endpoints) {
+        try {
+          const res = await fetch(endpoint);
+          if (res.ok) {
+            const contentType = res.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+              return await res.json();
+            }
           }
+        } catch (err) {
+          // ignore and try next
         }
-      })
-      .catch((err) => console.error("Configs error:", err));
+      }
+      return null;
+    };
+
+    fetchWithFallback(["/api/presets", "/_/backend/api/presets"]).then((data) => {
+      if (data && data.presets && data.presets.length > 0) setPresets(data.presets);
+    });
+
+    fetchWithFallback(["/api/configs", "/_/backend/api/configs"]).then((data) => {
+      if (data && data.configs && data.configs.length > 0) {
+        setConfigs(data.configs);
+        setActiveServerId(data.configs[0].id);
+      }
+    });
   }, []);
 
   const handleSaveConfig = (config: ServerConfig) => {

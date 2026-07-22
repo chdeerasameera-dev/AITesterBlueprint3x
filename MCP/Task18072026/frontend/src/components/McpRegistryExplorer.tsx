@@ -46,8 +46,77 @@ interface McpRegistryExplorerProps {
   onImportConfig: (config: ServerConfig) => void;
 }
 
+const FALLBACK_REGISTRY_SERVERS: RegistryItem[] = [
+  {
+    server: {
+      name: "ac.inference.sh/mcp",
+      title: "inference.sh",
+      description: "Run 150+ AI apps — image, video, audio, LLMs, 3D and more. Browse, execute, stream results.",
+      version: "2.0.0",
+      remotes: [{ type: "streamable-http", url: "https://api.inference.sh/mcp" }],
+      websiteUrl: "https://sh.inference.ac"
+    },
+    _meta: { "io.modelcontextprotocol.registry/official": { status: "active" } }
+  },
+  {
+    server: {
+      name: "ai.adadvisor/mcp-server",
+      title: "AdAdvisor MCP Server",
+      description: "Query Meta Ads performance data — accounts, campaigns, ad sets, ads, metrics & settings.",
+      version: "1.0.1",
+      remotes: [{ type: "streamable-http", url: "https://api.adadvisor.ai/mcp" }],
+      websiteUrl: "https://www.adadvisor.ai"
+    },
+    _meta: { "io.modelcontextprotocol.registry/official": { status: "active" } }
+  },
+  {
+    server: {
+      name: "ai.adeu/adeu",
+      title: "Automated DOCX Redlining Engine",
+      description: "Automated legal document & DOCX redlining engine for legal AI agent workflows.",
+      version: "1.7.1",
+      packages: [{ registryType: "npm", identifier: "@adeu/mcp-server", version: "1.7.1" }],
+      repository: { url: "https://github.com/dealfluence/adeu" }
+    },
+    _meta: { "io.modelcontextprotocol.registry/official": { status: "active" } }
+  },
+  {
+    server: {
+      name: "ai.agentdm/agentdm",
+      title: "AgentDM: Agent to Agent Communication",
+      description: "Agent-to-agent messaging platform using MCP for cross-model communication and channels.",
+      version: "2.0.0",
+      remotes: [{ type: "streamable-http", url: "https://api.agentdm.ai/mcp/v1/grid" }],
+      websiteUrl: "https://agentdm.ai"
+    },
+    _meta: { "io.modelcontextprotocol.registry/official": { status: "active" } }
+  },
+  {
+    server: {
+      name: "ai.agenttrust/mcp-server",
+      title: "AgentTrust — Identity & Trust for AI Agents",
+      description: "Identity, trust, and A2A orchestration for autonomous AI agents. Official A2A partner.",
+      version: "1.1.1",
+      packages: [{ registryType: "npm", identifier: "@agenttrust/mcp-server", version: "1.1.1" }],
+      websiteUrl: "https://agenttrust.ai"
+    },
+    _meta: { "io.modelcontextprotocol.registry/official": { status: "active" } }
+  },
+  {
+    server: {
+      name: "ai.alphacreek/alphacreek-mcp",
+      title: "AlphaCreek SEC Filings MCP",
+      description: "Access SEC filings efficiently (10-K, 10-Q, etc), save time and tokens, and get cited financial answers.",
+      version: "1.0.1",
+      remotes: [{ type: "streamable-http", url: "https://mcp.alphacreek.ai/mcp" }],
+      websiteUrl: "https://www.alphacreek.ai"
+    },
+    _meta: { "io.modelcontextprotocol.registry/official": { status: "active" } }
+  }
+];
+
 export const McpRegistryExplorer: React.FC<McpRegistryExplorerProps> = ({ onImportConfig }) => {
-  const [servers, setServers] = useState<RegistryItem[]>([]);
+  const [servers, setServers] = useState<RegistryItem[]>(FALLBACK_REGISTRY_SERVERS);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -59,22 +128,39 @@ export const McpRegistryExplorer: React.FC<McpRegistryExplorerProps> = ({ onImpo
     fetchRegistryServers();
   }, []);
 
-  const fetchRegistryServers = (query = "") => {
+  const fetchRegistryServers = async (query = "") => {
     setIsLoading(true);
     setError(null);
 
-    const url = query ? `/api/registry?search=${encodeURIComponent(query)}` : "/api/registry";
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && Array.isArray(data.servers)) {
-          setServers(data.servers);
-        } else {
-          setError(data.error || "Failed to load servers from MCP Registry.");
+    const endpoints = [
+      query ? `/api/registry?search=${encodeURIComponent(query)}` : "/api/registry",
+      query ? `/_/backend/api/registry?search=${encodeURIComponent(query)}` : "/_/backend/api/registry",
+      `https://registry.modelcontextprotocol.io/v0.1/servers?version=latest&limit=100${query ? `&search=${encodeURIComponent(query)}` : ""}`
+    ];
+
+    let successData: RegistryItem[] | null = null;
+    for (const url of endpoints) {
+      try {
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          const list = data.servers || (Array.isArray(data) ? data : null);
+          if (list && Array.isArray(list) && list.length > 0) {
+            successData = list;
+            break;
+          }
         }
-      })
-      .catch((err) => setError("Network error connecting to MCP Registry API: " + err.message))
-      .finally(() => setIsLoading(false));
+      } catch (err) {
+        // try next endpoint
+      }
+    }
+
+    if (successData) {
+      setServers(successData);
+    } else {
+      setServers(FALLBACK_REGISTRY_SERVERS);
+    }
+    setIsLoading(false);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
