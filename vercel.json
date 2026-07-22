@@ -1,9 +1,12 @@
 {
-  "name": "mcpexplorer-deera-s",
   "version": 2,
   "buildCommand": "cd MCP/Task18072026/frontend && npm install && npm run build",
   "outputDirectory": "MCP/Task18072026/frontend/dist",
   "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/MCP/Task18072026/api"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
