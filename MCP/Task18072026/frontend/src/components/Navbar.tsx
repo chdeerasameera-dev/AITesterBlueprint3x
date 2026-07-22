@@ -29,117 +29,136 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header style={{
       background: "var(--bg-secondary)",
       borderBottom: "1px solid var(--border-color)",
-      padding: "0.75rem 1.5rem",
+      padding: "0.5rem 1.25rem",
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
+      gap: "0.75rem",
+      flexWrap: "wrap",
       position: "sticky",
       top: 0,
-      zIndex: 50
+      zIndex: 100
     }}>
-      {/* Brand */}
-      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+      {/* Brand Logo & Title */}
+      <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexShrink: 0 }}>
         <div style={{
           background: "linear-gradient(135deg, var(--accent-teal), var(--accent-cyan))",
-          padding: "0.5rem",
+          padding: "0.4rem",
           borderRadius: "var(--radius-sm)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           color: "#04101e"
         }}>
-          <Compass size={22} />
+          <Compass size={18} />
         </div>
         <div>
-          <h1 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text-primary)" }}>
-            MCP Inspector Explorer
+          <h1 style={{ fontSize: "0.95rem", fontWeight: 700, color: "var(--text-primary)", lineHeight: 1.1 }}>
+            MCP Inspector
           </h1>
-          <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
-            QA & AI Automation DevTools v1.0
+          <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+            DevTools v1.0
           </span>
         </div>
       </div>
 
-      {/* Navigation Tabs */}
-      <nav style={{ display: "flex", gap: "0.5rem" }}>
+      {/* Compact Navigation Tabs Pill Container */}
+      <nav style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "0.25rem",
+        background: "var(--bg-input)",
+        padding: "0.25rem",
+        borderRadius: "var(--radius-md)",
+        border: "1px solid var(--border-color)",
+        flexWrap: "wrap"
+      }}>
         <button
           className={`btn ${activeTab === "connection" ? "btn-primary" : "btn-secondary"}`}
           onClick={() => setActiveTab("connection")}
+          style={{ padding: "0.3rem 0.6rem", fontSize: "0.78rem" }}
         >
-          <Server size={16} /> Connections
+          <Server size={14} /> Connections
         </button>
 
         <button
           className={`btn ${activeTab === "registry" ? "btn-primary" : "btn-secondary"}`}
           onClick={() => setActiveTab("registry")}
+          style={{ padding: "0.3rem 0.6rem", fontSize: "0.78rem" }}
         >
-          <Store size={16} /> MCP Registry
+          <Store size={14} /> Registry
         </button>
 
         <button
           className={`btn ${activeTab === "discovery" ? "btn-primary" : "btn-secondary"}`}
           onClick={() => setActiveTab("discovery")}
+          style={{ padding: "0.3rem 0.6rem", fontSize: "0.78rem" }}
         >
-          <Compass size={16} /> Discovery
+          <Compass size={14} /> Discovery
         </button>
 
         <button
           className={`btn ${activeTab === "playground" ? "btn-primary" : "btn-secondary"}`}
           onClick={() => setActiveTab("playground")}
+          style={{ padding: "0.3rem 0.6rem", fontSize: "0.78rem" }}
         >
-          <Play size={16} /> Playground
+          <Play size={14} /> Playground
         </button>
 
         <button
           className={`btn ${activeTab === "dashboard" ? "btn-primary" : "btn-secondary"}`}
           onClick={() => setActiveTab("dashboard")}
+          style={{ padding: "0.3rem 0.6rem", fontSize: "0.78rem" }}
         >
-          <BarChart2 size={16} /> Comparison
+          <BarChart2 size={14} /> Metrics
         </button>
 
         <button
           className={`btn ${activeTab === "info" ? "btn-primary" : "btn-secondary"}`}
           onClick={() => setActiveTab("info")}
+          style={{ padding: "0.3rem 0.6rem", fontSize: "0.78rem" }}
         >
-          <BookOpen size={16} /> Protocol Docs & Info
+          <BookOpen size={14} /> Protocol Docs
         </button>
       </nav>
 
-      {/* Right Controls */}
-      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-        {/* Theme Toggle Button (Light White / Dark Ocean) */}
+      {/* Right Action Controls (Non-overlapping) */}
+      <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexShrink: 0, flexWrap: "nowrap" }}>
+        {/* Theme Toggle Button */}
         <button
           className="btn btn-secondary"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          style={{ padding: "0.35rem 0.75rem", fontSize: "0.8rem", display: "flex", alignItems: "center", gap: "0.4rem" }}
-          title={theme === "dark" ? "Switch to White Background (Light Ocean)" : "Switch to Dark Ocean Theme"}
+          style={{ padding: "0.3rem 0.6rem", fontSize: "0.78rem", display: "flex", alignItems: "center", gap: "0.35rem", whiteSpace: "nowrap" }}
+          title={theme === "dark" ? "Switch to Light Theme" : "Switch to Dark Ocean Theme"}
         >
           {theme === "dark" ? (
             <>
-              <Sun size={15} color="var(--accent-amber)" />
-              <span>Light Mode</span>
+              <Sun size={14} color="var(--accent-amber)" />
+              <span>Light</span>
             </>
           ) : (
             <>
-              <Moon size={15} color="var(--accent-cyan)" />
-              <span>Dark Ocean</span>
+              <Moon size={14} color="var(--accent-cyan)" />
+              <span>Dark</span>
             </>
           )}
         </button>
 
-        {/* Read-Only Safety Toggle */}
+        {/* Read-Only Safety Toggle Switch */}
         <label style={{
           display: "flex",
           alignItems: "center",
-          gap: "0.4rem",
-          fontSize: "0.8rem",
-          background: "rgba(15, 28, 52, 0.9)",
-          padding: "0.35rem 0.65rem",
+          gap: "0.35rem",
+          fontSize: "0.75rem",
+          background: "var(--bg-input)",
+          padding: "0.3rem 0.55rem",
           borderRadius: "var(--radius-sm)",
           border: "1px solid var(--border-color)",
-          cursor: "pointer"
+          cursor: "pointer",
+          whiteSpace: "nowrap",
+          userSelect: "none"
         }}>
-          <ShieldCheck size={16} color={isReadOnlyGlobal ? "var(--accent-emerald)" : "var(--text-muted)"} />
+          <ShieldCheck size={14} color={isReadOnlyGlobal ? "var(--accent-emerald)" : "var(--text-muted)"} />
           <span style={{ color: isReadOnlyGlobal ? "var(--accent-emerald)" : "var(--text-muted)", fontWeight: 600 }}>
             Read-Only: {isReadOnlyGlobal ? "ON" : "OFF"}
           </span>
@@ -156,24 +175,22 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div style={{
             display: "flex",
             alignItems: "center",
-            gap: "0.5rem",
-            background: "rgba(15, 27, 49, 0.9)",
-            padding: "0.35rem 0.75rem",
+            gap: "0.4rem",
+            background: "var(--bg-input)",
+            padding: "0.3rem 0.6rem",
             borderRadius: "9999px",
             border: "1px solid var(--border-color)",
-            fontSize: "0.8rem"
+            fontSize: "0.75rem",
+            whiteSpace: "nowrap"
           }}>
             <span className={`status-dot ${activeServerResult.status === "connected" ? "green" : activeServerResult.status === "auth_required" ? "amber" : "red"}`}></span>
             <span style={{ fontWeight: 600 }}>{activeServerResult.name}</span>
-            <span className={`badge ${activeServerResult.isLocal ? "badge-local" : "badge-remote"}`}>
-              {activeServerResult.isLocal ? "Local" : "Remote"}
-            </span>
           </div>
         )}
 
         {/* Export Button */}
-        <button className="btn btn-primary" onClick={onOpenExport}>
-          <Download size={16} /> Export
+        <button className="btn btn-primary" onClick={onOpenExport} style={{ padding: "0.3rem 0.65rem", fontSize: "0.78rem", whiteSpace: "nowrap" }}>
+          <Download size={14} /> Export
         </button>
       </div>
     </header>
