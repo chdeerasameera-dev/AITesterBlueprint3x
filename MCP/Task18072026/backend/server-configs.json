@@ -1,0 +1,60 @@
+[
+  {
+    "id": "preset-playwright",
+    "name": "Playwright MCP",
+    "transport": "stdio",
+    "command": "npx -y @playwright/mcp@latest",
+    "args": [],
+    "authType": "N/A (Local stdio)",
+    "readOnlyDefault": true
+  },
+  {
+    "id": "preset-atlassian-remote",
+    "name": "Atlassian Rovo MCP",
+    "transport": "sse",
+    "url": "https://mcp.atlassian.com/v1/mcp/authv2",
+    "authType": "OAuth 2.1 / API Token",
+    "readOnlyDefault": true
+  },
+  {
+    "id": "preset-github-local",
+    "name": "GitHub MCP (Local Docker)",
+    "transport": "stdio",
+    "command": "docker",
+    "args": [
+      "run",
+      "-i",
+      "--rm",
+      "ghcr.io/github/github-mcp-server"
+    ],
+    "authType": "PAT (Environment)",
+    "readOnlyDefault": true
+  },
+  {
+    "id": "preset-github-remote",
+    "name": "toolbox-postgres",
+    "transport": "stdio",
+    "command": "npx -y @toolbox-sdk/server\"",
+    "args": [],
+    "url": "https://api.githubcopilot.com/mcp/",
+    "authType": "None",
+    "readOnlyDefault": true
+  },
+  {
+    "id": "server-1784656434983",
+    "name": "MongoDB",
+    "transport": "stdio",
+    "command": "npx -y mongodb-mcp-server@latest",
+    "args": [],
+    "authType": "None",
+    "readOnlyDefault": true
+  },
+  {
+    "id": "registry-ai-auteng-docs-1784686090630",
+    "name": "AutEng MCP - Markdown Publishing & Document Share Links",
+    "transport": "sse",
+    "url": "https://auteng.ai/mcp/docs",
+    "authType": "None / Unauthenticated",
+    "readOnlyDefault": true
+  }
+]

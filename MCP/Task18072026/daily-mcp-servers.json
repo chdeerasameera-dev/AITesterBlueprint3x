@@ -1,0 +1,35 @@
+[
+  {
+    "id": "playwright-mcp",
+    "name": "Playwright MCP",
+    "usage": "Browser automation for E2E test authoring and Playwright script generation",
+    "transport": "local",
+    "command": "npx -y @playwright/mcp@latest"
+  },
+  {
+    "id": "github-mcp",
+    "name": "GitHub MCP",
+    "usage": "PR review, issue triage, repo context for AI-assisted coding",
+    "transport": "local+remote",
+    "command": "ghcr.io/github/github-mcp-server (Local) / https://api.githubcopilot.com/mcp/ (Remote)"
+  },
+  {
+    "id": "atlassian-mcp",
+    "name": "Atlassian Rovo MCP",
+    "usage": "Jira ticket exploration, sprint backlog triage, and Confluence page search",
+    "transport": "remote",
+    "url": "https://mcp.atlassian.com/v1/mcp/authv2"
+  },
+  {
+    "id": "ado-mcp",
+    "name": "Azure DevOps MCP",
+    "usage": "WIQL queries, backlog docs, sprint/test case sync",
+    "transport": "local (custom)"
+  },
+  {
+    "id": "filesystem-mcp",
+    "name": "Filesystem MCP",
+    "usage": "Local file read/write for agent-driven doc generation",
+    "transport": "local"
+  }
+]
