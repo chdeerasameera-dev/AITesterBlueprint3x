@@ -35,11 +35,15 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({
 
   const [rawErrorModal, setRawErrorModal] = useState<{ name: string; error: string } | null>(null);
 
-  const handleSelectPreset = (preset: ServerConfig) => {
-    setSelectedConfig({
+  const handleSelectPreset = async (preset: ServerConfig) => {
+    const finalConfig: ServerConfig = {
       ...preset,
-      id: `custom-${Date.now()}`,
-    });
+      id: preset.id || `preset-${Date.now()}`,
+    };
+    setSelectedConfig(finalConfig);
+    onSaveConfig(finalConfig);
+    await onConnect(finalConfig);
+    setActiveServerId(finalConfig.id);
   };
 
   const handleFormSubmit = async (e: React.FormEvent) => {

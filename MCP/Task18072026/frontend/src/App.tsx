@@ -132,15 +132,51 @@ export const App: React.FC = () => {
   const handleConnect = async (config: ServerConfig) => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/discover", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(config),
-      });
+      const endpoints = ["/api/discover", "/_/backend/api/discover"];
+      let discovery: ServerDiscoveryResult | null = null;
 
-      const discovery: ServerDiscoveryResult = await res.json();
-      setDiscoveryResults((prev) => new Map(prev).set(config.id, discovery));
-      setActiveServerId(config.id);
+      for (const endpoint of endpoints) {
+        try {
+          const res = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(config),
+          });
+          if (res.ok) {
+            const contentType = res.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+              discovery = await res.json();
+              break;
+            }
+          }
+        } catch (e) {
+          // try next fallback endpoint
+        }
+      }
+
+      if (discovery) {
+        setDiscoveryResults((prev) => new Map(prev).set(config.id, discovery!));
+        setActiveServerId(config.id);
+        setActiveTab("discovery");
+      } else {
+        const errorResult: ServerDiscoveryResult = {
+          serverId: config.id,
+          name: config.name,
+          transport: config.transport,
+          isLocal: config.transport === "stdio",
+          status: "error",
+          errorDetails: config.transport === "stdio"
+            ? "Local stdio child process backend is offline. Run 'cd backend && npm start' on http://localhost:3001."
+            : "Remote MCP server endpoint unreachable. Verify URL or authentication header.",
+          lastSynced: new Date().toLocaleTimeString(),
+          tools: [],
+          resources: [],
+          prompts: []
+        };
+        setDiscoveryResults((prev) => new Map(prev).set(config.id, errorResult));
+        setActiveServerId(config.id);
+        setActiveTab("discovery");
+      }
     } catch (err: any) {
       console.error("Connect error:", err);
     } finally {
