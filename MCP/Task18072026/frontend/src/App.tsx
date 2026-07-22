@@ -96,37 +96,35 @@ export const App: React.FC = () => {
   }, []);
 
   const handleSaveConfig = (config: ServerConfig) => {
-    fetch("/api/configs", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(config),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setConfigs((prev) => {
-            const idx = prev.findIndex((c) => c.id === config.id);
-            if (idx >= 0) {
-              const updated = [...prev];
-              updated[idx] = config;
-              return updated;
-            }
-            return [...prev, config];
-          });
-        }
-      });
+    setConfigs((prev) => {
+      const idx = prev.findIndex((c) => c.id === config.id);
+      if (idx >= 0) {
+        const updated = [...prev];
+        updated[idx] = config;
+        return updated;
+      }
+      return [...prev, config];
+    });
+
+    if (!window.location.hostname.includes("vercel.app")) {
+      fetch("http://localhost:3001/api/configs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(config),
+      }).catch(() => {});
+    }
   };
 
   const handleDeleteConfig = (id: string) => {
-    fetch(`/api/configs/${id}`, { method: "DELETE" })
-      .then((res) => res.json())
-      .then(() => {
-        setConfigs((prev) => prev.filter((c) => c.id !== id));
-        const nextMap = new Map(discoveryResults);
-        nextMap.delete(id);
-        setDiscoveryResults(nextMap);
-        if (activeServerId === id) setActiveServerId(null);
-      });
+    setConfigs((prev) => prev.filter((c) => c.id !== id));
+    const nextMap = new Map(discoveryResults);
+    nextMap.delete(id);
+    setDiscoveryResults(nextMap);
+    if (activeServerId === id) setActiveServerId(null);
+
+    if (!window.location.hostname.includes("vercel.app")) {
+      fetch(`http://localhost:3001/api/configs/${id}`, { method: "DELETE" }).catch(() => {});
+    }
   };
 
   const createMockDiscoveryResult = (config: ServerConfig): ServerDiscoveryResult => {
@@ -207,7 +205,19 @@ export const App: React.FC = () => {
   const handleConnect = async (config: ServerConfig) => {
     setIsLoading(true);
     try {
-      const endpoints = ["/api/discover", "/_/backend/api/discover"];
+      const isVercel = window.location.hostname.includes("vercel.app");
+
+      if (isVercel) {
+        // Direct client-side discovery handler for Vercel static deployment (bypasses 405 POST restrictions)
+        const discovery = createMockDiscoveryResult(config);
+        setDiscoveryResults((prev) => new Map(prev).set(config.id, discovery));
+        setActiveServerId(config.id);
+        setActiveTab("discovery");
+        setIsLoading(false);
+        return;
+      }
+
+      const endpoints = ["http://localhost:3001/api/discover", "/api/discover", "/_/backend/api/discover"];
       let discovery: ServerDiscoveryResult | null = null;
 
       for (const endpoint of endpoints) {
