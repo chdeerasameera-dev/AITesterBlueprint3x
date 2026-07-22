@@ -1,0 +1,15 @@
+{
+  "name": "mcp-inspector-explorer",
+  "version": "1.0.0",
+  "description": "MCP Inspector & Explorer Monorepo",
+  "main": "backend/dist/server.js",
+  "scripts": {
+    "start": "npx concurrently \"npm run start --prefix backend\" \"npm run dev --prefix frontend\"",
+    "dev": "npx concurrently \"npm run start --prefix backend\" \"npm run dev --prefix frontend\"",
+    "start:backend": "npm run start --prefix backend",
+    "start:frontend": "npm run dev --prefix frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
