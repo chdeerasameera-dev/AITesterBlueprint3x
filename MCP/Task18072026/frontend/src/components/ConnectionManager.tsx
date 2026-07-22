@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ServerConfig, ServerDiscoveryResult } from "../types/mcp";
-import { Server, Plus, Zap, CheckCircle2, AlertTriangle, XCircle, Trash2, RefreshCw, Lock, Terminal, Globe } from "lucide-react";
+import { Server, Plus, Zap, CheckCircle2, AlertTriangle, XCircle, Trash2, RefreshCw, Lock, Terminal, Globe, Info } from "lucide-react";
 
 interface ConnectionManagerProps {
   configs: ServerConfig[];
@@ -108,6 +108,31 @@ export const ConnectionManager: React.FC<ConnectionManagerProps> = ({
               </button>
             ))}
           </div>
+        </div>
+
+        {/* How to Connect MCP Servers Guide Banner */}
+        <div style={{
+          gridColumn: "1 / -1",
+          background: "rgba(0, 242, 254, 0.08)",
+          border: "1px solid rgba(0, 242, 254, 0.25)",
+          borderRadius: "var(--radius-md)",
+          padding: "1rem 1.25rem",
+          marginBottom: "0.5rem",
+          fontSize: "0.85rem",
+          lineHeight: 1.55,
+          color: "var(--text-secondary)"
+        }}>
+          <div style={{ fontWeight: 700, color: "var(--accent-cyan)", marginBottom: "0.35rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+            <Info size={16} /> How to Connect MCP Servers (Local vs Remote):
+          </div>
+          <ul style={{ margin: 0, paddingLeft: "1.2rem", display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+            <li>
+              <strong>Local stdio Child Processes (Playwright MCP, Local Filesystem)</strong>: Run locally on your PC. Make sure the local Express backend proxy is running on your machine (<code style={{ color: "var(--accent-teal)" }}>cd backend && npm start</code> on <code style={{ color: "var(--accent-cyan)" }}>http://localhost:3001</code>) so your OS can spawn local child processes.
+            </li>
+            <li>
+              <strong>Remote Streamable HTTP / SSE Servers (Atlassian Rovo, GitHub Copilot, AdAdvisor)</strong>: Connect directly over HTTPS! Select a preset or enter the endpoint URL, enter your Bearer token/key if required, and click <strong>"Save & Connect"</strong>.
+            </li>
+          </ul>
         </div>
 
         {/* Configure / Edit Form */}
