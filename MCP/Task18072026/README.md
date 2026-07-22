@@ -59,16 +59,43 @@ npm run dev
 
 ---
 
-## 🎨 Design System & Typography
-
-- **Fonts**: [Plus Jakarta Sans](https://fonts.google.com/specimen/Plus+Jakarta+Sans) (Headings & UI) & [Fira Code](https://fonts.google.com/specimen/Fira+Code) / [JetBrains Mono](https://fonts.google.com/specimen/JetBrains+Mono) (Code & Schemas).
-- **Themes**:
-  - **Deep Midnight Black 🌙**: `#030712` background with neon cyan (`#00f2fe`) accents and 3D glassmorphism.
-  - **Studio White ☀️**: Crisp white `#ffffff` / `#f0f4f8` with ocean blue accents (`#0284c7`) and deep slate black typography.
-
 ---
 
-## 🛡 Security & Credential Protection
+## ☁️ Connecting Backend from Vercel Deployment
 
-- Passwords, Tokens, PATs, and Headers entered in the UI are held in memory and passed directly to the backend proxy.
-- All exported Markdown reports and JSON manifests automatically sanitize sensitive authentication tokens and headers.
+There are two primary ways to connect your Express backend when deploying the frontend on Vercel:
+
+### Option A: External Node Server Deployment (Recommended for Local `stdio` MCP execution)
+- **Why**: MCP `stdio` servers (e.g. `npx -y @playwright/mcp@latest`) spawn persistent child processes (`stdin`/`stdout`). Vercel serverless containers are ephemeral and cannot keep background `stdio` child processes running.
+- **Setup**:
+  1. Host `backend/` on a platform like **Render**, **Railway**, **Fly.io**, or an **EC2 / VPS** instance:
+     ```bash
+     cd backend
+     npm install
+     npm start
+     ```
+  2. In your **Vercel Project Settings &rarr; Environment Variables**, add:
+     ```env
+     VITE_API_BASE_URL=https://your-backend-service.onrender.com
+     ```
+  3. Re-deploy Vercel. All `/api/*` discovery calls will route to your remote Node server.
+
+### Option B: Vercel Serverless Function (`api/index.ts`) (For Remote HTTP/SSE MCP Servers & Registry Proxy)
+- **Why**: Serverless functions handle HTTP/SSE endpoints, API presets, saved configurations, and live MCP Registry proxy requests effortlessly.
+- **Setup**:
+  1. Add `api/index.ts` exporting your Express app:
+     ```ts
+     import app from "../backend/src/server.js";
+     export default app;
+     ```
+  2. Add `rewrites` to `vercel.json`:
+     ```json
+     {
+       "rewrites": [
+         { "source": "/api/(.*)", "destination": "/api" },
+         { "source": "/(.*)", "destination": "/index.html" }
+       ]
+     }
+     ```
+  3. Deploying to Vercel automatically exposes your backend API at `https://your-app.vercel.app/api`.
+
