@@ -1,0 +1,532 @@
+[
+  {
+    "project_id": "proj-1",
+    "timestamp": "2026-08-16 22:38:09",
+    "requirement_title": "Test Jira Issue",
+    "total_tests": 5,
+    "passed": 3,
+    "failed": 2,
+    "pass_rate": 60.0,
+    "automation_quality_avg": 85.0,
+    "executions": [
+      {
+        "execution_id": "EXEC-1B96E1",
+        "test_case_id": "TC-8A7C-01",
+        "status": "PASSED",
+        "duration_ms": 1004.3,
+        "stdout": "  Running Playwright tests...\n  Browser: chromium (headless)\n  Workers: 1\n\n  [344ms] \u25b6 Step 1: the user is on the login page\n  [394ms] \u2713 OK\n  [454ms] \u25b6 Step 2: the user enters valid credentials\n  [504ms] \u2713 OK\n  [803ms] \u25b6 Step 3: the user is redirected to the dashboard\n  [853ms] \u2713 OK\n\n  1 test passed (1003ms)",
+        "stderr": "",
+        "error_message": null,
+        "stack_trace": null,
+        "screenshot_path": null,
+        "video_path": null
+      },
+      {
+        "execution_id": "EXEC-C9712C",
+        "test_case_id": "TC-641E-02",
+        "status": "PASSED",
+        "duration_ms": 1062.0,
+        "stdout": "  Running Playwright tests...\n  Browser: chromium (headless)\n  Workers: 1\n\n  [278ms] \u25b6 Step 1: the user is on the login page\n  [328ms] \u2713 OK\n  [406ms] \u25b6 Step 2: the user enters an incorrect password\n  [456ms] \u2713 OK\n  [690ms] \u25b6 Step 3: an error message 'Invalid credentials' is displayed\n  [740ms] \u2713 OK\n\n  1 test passed (890ms)",
+        "stderr": "",
+        "error_message": null,
+        "stack_trace": null,
+        "screenshot_path": null,
+        "video_path": null
+      },
+      {
+        "execution_id": "EXEC-7935FF",
+        "test_case_id": "TC-2901-03",
+        "status": "FAILED",
+        "duration_ms": 6262.6,
+        "stdout": "  Running Playwright tests...\n  Browser: chromium (headless)\n  Workers: 1\n\n  [281ms] \u25b6 Step 1: Submit input at boundary: Empty input is rejected\n  [331ms] \u2713 OK\n  [603ms] \u25b6 Step 2: Verify system response matches specification\n  [803ms] \u2717 FAILED \u2014 see error details below\n\n  1 test failed (803ms)",
+        "stderr": "TimeoutError: locator.fill: Timeout 5000ms exceeded.\nCall log:\n  - waiting for getByRole('textbox').first()",
+        "error_message": "Locator 'getByRole('textbox').first()' timed out after 5000ms \u2014 element not found. AUTOMATION_DEFECT: locator may need update.",
+        "stack_trace": null,
+        "screenshot_path": "screenshots/TC-2901-03.png",
+        "video_path": null
+      },
+      {
+        "execution_id": "EXEC-A91CC1",
+        "test_case_id": "TC-847F-04",
+        "status": "PASSED",
+        "duration_ms": 1343.6,
+        "stdout": "  Running Playwright tests...\n  Browser: chromium (headless)\n  Workers: 1\n\n  [240ms] \u25b6 Step 1: Navigate to form\n  [290ms] \u2713 OK\n  [582ms] \u25b6 Step 2: Leave required fields empty\n  [632ms] \u2713 OK\n  [756ms] \u25b6 Step 3: Click submit\n  [806ms] \u2713 OK\n  [937ms] \u25b6 Step 4: Assert validation messages visible\n  [987ms] \u2713 OK\n\n  1 test passed (1137ms)",
+        "stderr": "",
+        "error_message": null,
+        "stack_trace": null,
+        "screenshot_path": null,
+        "video_path": null
+      },
+      {
+        "execution_id": "EXEC-255FA8",
+        "test_case_id": "TC-316E-05",
+        "status": "FAILED",
+        "duration_ms": 1577.4,
+        "stdout": "  Running Playwright tests...\n  Browser: chromium (headless)\n  Workers: 1\n\n  [111ms] \u25b6 Step 1: Clear session/cookies\n  [161ms] \u2713 OK\n  [200ms] \u25b6 Step 2: Navigate directly to protected URL\n  [250ms] \u2713 OK\n  [522ms] \u25b6 Step 3: Assert HTTP 401 or redirect to login\n  [722ms] \u2717 FAILED \u2014 see error details below\n\n  1 test failed (722ms)",
+        "stderr": "Error: expect(page).toHaveURL(expected)\n  Expected pattern: /login|signin|unauthorized/i\n  Received: 'http://localhost:3000/dashboard'",
+        "error_message": "Expected URL to match /login|signin|unauthorized/i but navigated to /dashboard \u2014 APPLICATION DEFECT detected",
+        "stack_trace": null,
+        "screenshot_path": "screenshots/TC-316E-05.png",
+        "video_path": null
+      }
+    ],
+    "test_cases": [
+      {
+        "id": "TC-8A7C-01",
+        "requirement_id": "REQ-2E33B6",
+        "title": "[POSITIVE] Happy path \u2014 Test Jira Issue",
+        "type": "POSITIVE",
+        "gherkin": "Feature: Test Jira Issue\n  Scenario: Happy path \u2014 valid input succeeds\n    Given the user is on the login page\n    When the user enters valid credentials\n    Then the user is redirected to the dashboard",
+        "steps": [
+          "the user is on the login page",
+          "the user enters valid credentials",
+          "the user is redirected to the dashboard"
+        ],
+        "expected_outcome": "User is authenticated and lands on the dashboard",
+        "traceability_tag": "REQ_REF:REQ-2E33B6 | AC: Given a user visits the target page, when valid inputs are p"
+      },
+      {
+        "id": "TC-641E-02",
+        "requirement_id": "REQ-2E33B6",
+        "title": "[NEGATIVE] Invalid input rejected \u2014 Test Jira Issue",
+        "type": "NEGATIVE",
+        "gherkin": "Feature: Test Jira Issue\n  Scenario: Invalid input is rejected with appropriate error\n    Given the user is on the login page\n    When the user enters an incorrect password\n    Then an error message 'Invalid credentials' is displayed",
+        "steps": [
+          "the user is on the login page",
+          "the user enters an incorrect password",
+          "an error message 'Invalid credentials' is displayed"
+        ],
+        "expected_outcome": "Login is denied; error message shown; no session created",
+        "traceability_tag": "REQ_REF:REQ-2E33B6 | AC: Given invalid or missing inputs, when the action is submitte"
+      },
+      {
+        "id": "TC-2901-03",
+        "requirement_id": "REQ-2E33B6",
+        "title": "[BOUNDARY] Edge case input \u2014 Test Jira Issue",
+        "type": "BOUNDARY",
+        "gherkin": "Feature: Test Jira Issue\n  Scenario: Boundary input is handled correctly\n    Given the system accepts input at its boundary limit\n    When the user submits input at the boundary: Empty input is rejected\n    Then the system accepts or rejects the input per specification",
+        "steps": [
+          "Submit input at boundary: Empty input is rejected",
+          "Verify system response matches specification"
+        ],
+        "expected_outcome": "System enforces boundary: Empty input is rejected",
+        "traceability_tag": "REQ_REF:REQ-2E33B6 | Boundary: Empty input is rejected"
+      },
+      {
+        "id": "TC-847F-04",
+        "requirement_id": "REQ-2E33B6",
+        "title": "[VALIDATION] Required field enforcement \u2014 Test Jira Issue",
+        "type": "VALIDATION",
+        "gherkin": "Feature: Test Jira Issue\n  Scenario: Empty required fields are rejected\n    Given the user is on the relevant form\n    When the user submits the form without filling required fields\n    Then validation messages appear for each empty required field",
+        "steps": [
+          "Navigate to form",
+          "Leave required fields empty",
+          "Click submit",
+          "Assert validation messages visible"
+        ],
+        "expected_outcome": "Form submission blocked; inline validation messages displayed for each empty required field",
+        "traceability_tag": "REQ_REF:REQ-2E33B6 | Validation"
+      },
+      {
+        "id": "TC-316E-05",
+        "requirement_id": "REQ-2E33B6",
+        "title": "[SECURITY] Unauthorized access blocked \u2014 Test Jira Issue",
+        "type": "SECURITY",
+        "gherkin": "Feature: Test Jira Issue\n  Scenario: Unauthenticated access is blocked\n    Given the user is not authenticated\n    When the user attempts to access the protected resource\n    Then the user is redirected to the login page with HTTP 401",
+        "steps": [
+          "Clear session/cookies",
+          "Navigate directly to protected URL",
+          "Assert HTTP 401 or redirect to login"
+        ],
+        "expected_outcome": "Access denied; user redirected to login; no sensitive data exposed",
+        "traceability_tag": "REQ_REF:REQ-2E33B6 | Security"
+      }
+    ],
+    "automation_scripts": [
+      {
+        "id": "AUTO-3D996E",
+        "test_case_id": "TC-8A7C-01",
+        "framework": "PLAYWRIGHT",
+        "language": "TYPESCRIPT",
+        "code": "import { test, expect } from '@playwright/test';\n\n// Traceability: REQ_REF:REQ-2E33B6 | AC: Given a user visits the target page, when valid inputs are p\ntest('[POSITIVE] Happy path \u2014 Test Jira Issue', async ({ page }) => {\n  await page.goto(process.env.BASE_URL || 'http://localhost:3000');\n\n  // Primary happy-path workflow\n  await page.getByRole('button', { name: /submit|continue|proceed/i }).click();\n\n  // Assert expected outcome: User is authenticated and lands on the dashboard\n  await expect(page.getByRole('status')).toContainText(/success|complete|confirmed/i);\n});",
+        "page_objects": [
+          {
+            "name": "LoginPage",
+            "locators": "getByRole('button'), getByLabel('email'), getByLabel('password')"
+          },
+          {
+            "name": "DashboardPage",
+            "locators": "getByRole('heading'), getByRole('navigation')"
+          }
+        ]
+      },
+      {
+        "id": "AUTO-0C3F02",
+        "test_case_id": "TC-641E-02",
+        "framework": "PLAYWRIGHT",
+        "language": "TYPESCRIPT",
+        "code": "import { test, expect } from '@playwright/test';\n\n// Traceability: REQ_REF:REQ-2E33B6 | AC: Given invalid or missing inputs, when the action is submitte\ntest('[NEGATIVE] Invalid input rejected \u2014 Test Jira Issue', async ({ page }) => {\n  await page.goto(process.env.BASE_URL || 'http://localhost:3000');\n\n  // Submit with invalid/wrong data\n  await page.getByLabel(/email|username/i).fill('invalid-input@bad.com');\n  await page.getByLabel(/password/i).fill('wrongpassword');\n  await page.getByRole('button', { name: /submit|login|send/i }).click();\n\n  // Assert: error message displayed, no navigation to protected area\n  await expect(page.getByRole('alert')).toBeVisible();\n  await expect(page.getByRole('alert')).toContainText(/invalid|error|incorrect|not found/i);\n  await expect(page).toHaveURL(/(login|reset|error)/i);\n});",
+        "page_objects": [
+          {
+            "name": "LoginPage",
+            "locators": "getByRole('button'), getByLabel('email'), getByLabel('password')"
+          },
+          {
+            "name": "DashboardPage",
+            "locators": "getByRole('heading'), getByRole('navigation')"
+          }
+        ]
+      },
+      {
+        "id": "AUTO-71F2C1",
+        "test_case_id": "TC-2901-03",
+        "framework": "PLAYWRIGHT",
+        "language": "TYPESCRIPT",
+        "code": "import { test, expect } from '@playwright/test';\n\n// Traceability: REQ_REF:REQ-2E33B6 | Boundary: Empty input is rejected\ntest('[BOUNDARY] Edge case input \u2014 Test Jira Issue', async ({ page }) => {\n  await page.goto(process.env.BASE_URL || 'http://localhost:3000');\n\n  const boundaryInput = 'A'.repeat(128); // max boundary value\n\n  const inputField = page.getByRole('textbox').first();\n  await inputField.fill(boundaryInput);\n  await page.getByRole('button', { name: /submit|save|continue/i }).click();\n\n  // Assert: boundary enforced \u2014 either accepted or rejected with clear message\n  const alert = page.getByRole('alert');\n  const isError = await alert.isVisible().catch(() => false);\n  if (isError) {\n    await expect(alert).toContainText(/too long|maximum|limit/i);\n  } else {\n    await expect(page.getByRole('status')).toContainText(/success|saved/i);\n  }\n});",
+        "page_objects": [
+          {
+            "name": "LoginPage",
+            "locators": "getByRole('button'), getByLabel('email'), getByLabel('password')"
+          },
+          {
+            "name": "DashboardPage",
+            "locators": "getByRole('heading'), getByRole('navigation')"
+          }
+        ]
+      },
+      {
+        "id": "AUTO-0CF68F",
+        "test_case_id": "TC-847F-04",
+        "framework": "PLAYWRIGHT",
+        "language": "TYPESCRIPT",
+        "code": "import { test, expect } from '@playwright/test';\n\n// Traceability: REQ_REF:REQ-2E33B6 | Validation\ntest('[VALIDATION] Required field enforcement \u2014 Test Jira Issue', async ({ page }) => {\n  await page.goto(process.env.BASE_URL || 'http://localhost:3000');\n\n  // Submit empty form without filling required fields\n  await page.getByRole('button', { name: /submit|save|continue/i }).click();\n\n  // Assert: validation messages appear for each required field\n  const validationMessages = page.locator('[aria-invalid=\"true\"], .error-message, [role=\"alert\"]');\n  await expect(validationMessages.first()).toBeVisible();\n  await expect(page).toHaveURL(/(form|register|login|reset)/i); // still on same page\n});",
+        "page_objects": [
+          {
+            "name": "LoginPage",
+            "locators": "getByRole('button'), getByLabel('email'), getByLabel('password')"
+          },
+          {
+            "name": "DashboardPage",
+            "locators": "getByRole('heading'), getByRole('navigation')"
+          }
+        ]
+      },
+      {
+        "id": "AUTO-5383E0",
+        "test_case_id": "TC-316E-05",
+        "framework": "PLAYWRIGHT",
+        "language": "TYPESCRIPT",
+        "code": "import { test, expect } from '@playwright/test';\n\n// Traceability: REQ_REF:REQ-2E33B6 | Security\ntest('[SECURITY] Unauthorized access blocked \u2014 Test Jira Issue', async ({ page }) => {\n  // Clear all cookies and session storage\n  await page.context().clearCookies();\n\n  // Attempt direct navigation to a protected resource\n  const protectedUrl = `${process.env.BASE_URL || 'http://localhost:3000'}/dashboard`;\n  await page.goto(protectedUrl);\n\n  // Assert: redirected to login or receives 401\n  await expect(page).toHaveURL(/login|signin|unauthorized/i);\n  await expect(page.getByRole('heading', { name: /login|sign in/i })).toBeVisible();\n});",
+        "page_objects": [
+          {
+            "name": "LoginPage",
+            "locators": "getByRole('button'), getByLabel('email'), getByLabel('password')"
+          },
+          {
+            "name": "DashboardPage",
+            "locators": "getByRole('heading'), getByRole('navigation')"
+          }
+        ]
+      }
+    ],
+    "failure_analyses": [
+      {
+        "execution_id": "EXEC-7935FF",
+        "classification": "AUTOMATION_DEFECT",
+        "confidence": 0.93,
+        "root_cause": "A Playwright locator timed out \u2014 the DOM element was not found using the current selector. Likely caused by a UI change in the application.",
+        "evidence": [
+          "Locator 'getByRole('textbox').first()' timed out after 5000ms \u2014 element not found. AUTOMATION_DEFECT: locator may need update.",
+          "TimeoutError: locator.fill: Timeout 5000ms exceeded.\nCall log:\n  - waiting for getByRole('textbox').first()",
+          "Test type: BOUNDARY",
+          "Duration: 6262.6ms"
+        ],
+        "suggested_fix": "Replace generic locator with a more stable semantic locator (getByTestId or getByRole).",
+        "can_self_heal": true,
+        "jira_ticket_key": "BUG-D623",
+        "jira_ticket_url": "https://jira.company.com/browse/BUG-D623"
+      },
+      {
+        "execution_id": "EXEC-255FA8",
+        "classification": "UNKNOWN",
+        "confidence": 0.5,
+        "root_cause": "Insufficient evidence to classify failure. Review full trace.",
+        "evidence": [
+          "Expected URL to match /login|signin|unauthorized/i but navigated to /dashboard \u2014 APPLICATION DEFECT detected",
+          "Error: expect(page).toHaveURL(expected)\n  Expected pattern: /login|signin|unauthorized/i\n  Received: 'http://localhost:3000/dashboard'",
+          "Test type: SECURITY",
+          "Duration: 1577.4ms"
+        ],
+        "suggested_fix": "Gather more evidence \u2014 enable Playwright trace and screenshot.",
+        "can_self_heal": false,
+        "jira_ticket_key": "BUG-9C96",
+        "jira_ticket_url": "https://jira.company.com/browse/BUG-9C96"
+      }
+    ]
+  },
+  {
+    "project_id": "proj-03",
+    "timestamp": "2026-08-16 22:39:11",
+    "requirement_title": "Login Functionality",
+    "total_tests": 5,
+    "passed": 3,
+    "failed": 2,
+    "pass_rate": 60.0,
+    "automation_quality_avg": 85.0,
+    "executions": [
+      {
+        "execution_id": "EXEC-DDC401",
+        "test_case_id": "TC-77C9-01",
+        "status": "PASSED",
+        "duration_ms": 1704.6,
+        "stdout": "  Running Playwright tests...\n  Browser: chromium (headless)\n  Workers: 1\n\n  [125ms] \u25b6 Step 1: the user is on the login page\n  [175ms] \u2713 OK\n  [504ms] \u25b6 Step 2: the user enters valid credentials\n  [554ms] \u2713 OK\n  [634ms] \u25b6 Step 3: the user is redirected to the dashboard\n  [684ms] \u2713 OK\n\n  1 test passed (834ms)",
+        "stderr": "",
+        "error_message": null,
+        "stack_trace": null,
+        "screenshot_path": null,
+        "video_path": null
+      },
+      {
+        "execution_id": "EXEC-1B3A90",
+        "test_case_id": "TC-5F6B-02",
+        "status": "PASSED",
+        "duration_ms": 1577.5,
+        "stdout": "  Running Playwright tests...\n  Browser: chromium (headless)\n  Workers: 1\n\n  [214ms] \u25b6 Step 1: the user is on the login page\n  [264ms] \u2713 OK\n  [533ms] \u25b6 Step 2: the user enters an incorrect password\n  [583ms] \u2713 OK\n  [638ms] \u25b6 Step 3: an error message 'Invalid credentials' is displayed\n  [688ms] \u2713 OK\n\n  1 test passed (838ms)",
+        "stderr": "",
+        "error_message": null,
+        "stack_trace": null,
+        "screenshot_path": null,
+        "video_path": null
+      },
+      {
+        "execution_id": "EXEC-70E76A",
+        "test_case_id": "TC-BFFE-03",
+        "status": "FAILED",
+        "duration_ms": 5118.2,
+        "stdout": "  Running Playwright tests...\n  Browser: chromium (headless)\n  Workers: 1\n\n  [128ms] \u25b6 Step 1: Submit input at boundary: Empty input is rejected\n  [178ms] \u2713 OK\n  [434ms] \u25b6 Step 2: Verify system response matches specification\n  [634ms] \u2717 FAILED \u2014 see error details below\n\n  1 test failed (634ms)",
+        "stderr": "TimeoutError: locator.fill: Timeout 5000ms exceeded.\nCall log:\n  - waiting for getByRole('textbox').first()",
+        "error_message": "Locator 'getByRole('textbox').first()' timed out after 5000ms \u2014 element not found. AUTOMATION_DEFECT: locator may need update.",
+        "stack_trace": null,
+        "screenshot_path": "screenshots/TC-BFFE-03.png",
+        "video_path": null
+      },
+      {
+        "execution_id": "EXEC-448255",
+        "test_case_id": "TC-1368-04",
+        "status": "PASSED",
+        "duration_ms": 1675.8,
+        "stdout": "  Running Playwright tests...\n  Browser: chromium (headless)\n  Workers: 1\n\n  [131ms] \u25b6 Step 1: Navigate to form\n  [181ms] \u2713 OK\n  [391ms] \u25b6 Step 2: Leave required fields empty\n  [441ms] \u2713 OK\n  [472ms] \u25b6 Step 3: Click submit\n  [522ms] \u2713 OK\n  [734ms] \u25b6 Step 4: Assert validation messages visible\n  [784ms] \u2713 OK\n\n  1 test passed (934ms)",
+        "stderr": "",
+        "error_message": null,
+        "stack_trace": null,
+        "screenshot_path": null,
+        "video_path": null
+      },
+      {
+        "execution_id": "EXEC-5C4F53",
+        "test_case_id": "TC-5509-05",
+        "status": "FAILED",
+        "duration_ms": 2396.8,
+        "stdout": "  Running Playwright tests...\n  Browser: chromium (headless)\n  Workers: 1\n\n  [220ms] \u25b6 Step 1: Clear session/cookies\n  [270ms] \u2713 OK\n  [591ms] \u25b6 Step 2: Navigate directly to protected URL\n  [641ms] \u2713 OK\n  [899ms] \u25b6 Step 3: Assert HTTP 401 or redirect to login\n  [1099ms] \u2717 FAILED \u2014 see error details below\n\n  1 test failed (1099ms)",
+        "stderr": "Error: expect(page).toHaveURL(expected)\n  Expected pattern: /login|signin|unauthorized/i\n  Received: 'http://localhost:3000/dashboard'",
+        "error_message": "Expected URL to match /login|signin|unauthorized/i but navigated to /dashboard \u2014 APPLICATION DEFECT detected",
+        "stack_trace": null,
+        "screenshot_path": "screenshots/TC-5509-05.png",
+        "video_path": null
+      }
+    ],
+    "test_cases": [
+      {
+        "id": "TC-77C9-01",
+        "requirement_id": "REQ-4B86EA",
+        "title": "[POSITIVE] Happy path \u2014 Login Functionality",
+        "type": "POSITIVE",
+        "gherkin": "Feature: Login Functionality\n  Scenario: Happy path \u2014 valid input succeeds\n    Given the user is on the login page\n    When the user enters valid credentials\n    Then the user is redirected to the dashboard",
+        "steps": [
+          "the user is on the login page",
+          "the user enters valid credentials",
+          "the user is redirected to the dashboard"
+        ],
+        "expected_outcome": "User is authenticated and lands on the dashboard",
+        "traceability_tag": "REQ_REF:REQ-4B86EA | AC: Given a user visits the target page, when valid inputs are p"
+      },
+      {
+        "id": "TC-5F6B-02",
+        "requirement_id": "REQ-4B86EA",
+        "title": "[NEGATIVE] Invalid input rejected \u2014 Login Functionality",
+        "type": "NEGATIVE",
+        "gherkin": "Feature: Login Functionality\n  Scenario: Invalid input is rejected with appropriate error\n    Given the user is on the login page\n    When the user enters an incorrect password\n    Then an error message 'Invalid credentials' is displayed",
+        "steps": [
+          "the user is on the login page",
+          "the user enters an incorrect password",
+          "an error message 'Invalid credentials' is displayed"
+        ],
+        "expected_outcome": "Login is denied; error message shown; no session created",
+        "traceability_tag": "REQ_REF:REQ-4B86EA | AC: Given invalid or missing inputs, when the action is submitte"
+      },
+      {
+        "id": "TC-BFFE-03",
+        "requirement_id": "REQ-4B86EA",
+        "title": "[BOUNDARY] Edge case input \u2014 Login Functionality",
+        "type": "BOUNDARY",
+        "gherkin": "Feature: Login Functionality\n  Scenario: Boundary input is handled correctly\n    Given the system accepts input at its boundary limit\n    When the user submits input at the boundary: Empty input is rejected\n    Then the system accepts or rejects the input per specification",
+        "steps": [
+          "Submit input at boundary: Empty input is rejected",
+          "Verify system response matches specification"
+        ],
+        "expected_outcome": "System enforces boundary: Empty input is rejected",
+        "traceability_tag": "REQ_REF:REQ-4B86EA | Boundary: Empty input is rejected"
+      },
+      {
+        "id": "TC-1368-04",
+        "requirement_id": "REQ-4B86EA",
+        "title": "[VALIDATION] Required field enforcement \u2014 Login Functionality",
+        "type": "VALIDATION",
+        "gherkin": "Feature: Login Functionality\n  Scenario: Empty required fields are rejected\n    Given the user is on the relevant form\n    When the user submits the form without filling required fields\n    Then validation messages appear for each empty required field",
+        "steps": [
+          "Navigate to form",
+          "Leave required fields empty",
+          "Click submit",
+          "Assert validation messages visible"
+        ],
+        "expected_outcome": "Form submission blocked; inline validation messages displayed for each empty required field",
+        "traceability_tag": "REQ_REF:REQ-4B86EA | Validation"
+      },
+      {
+        "id": "TC-5509-05",
+        "requirement_id": "REQ-4B86EA",
+        "title": "[SECURITY] Unauthorized access blocked \u2014 Login Functionality",
+        "type": "SECURITY",
+        "gherkin": "Feature: Login Functionality\n  Scenario: Unauthenticated access is blocked\n    Given the user is not authenticated\n    When the user attempts to access the protected resource\n    Then the user is redirected to the login page with HTTP 401",
+        "steps": [
+          "Clear session/cookies",
+          "Navigate directly to protected URL",
+          "Assert HTTP 401 or redirect to login"
+        ],
+        "expected_outcome": "Access denied; user redirected to login; no sensitive data exposed",
+        "traceability_tag": "REQ_REF:REQ-4B86EA | Security"
+      }
+    ],
+    "automation_scripts": [
+      {
+        "id": "AUTO-32FEB7",
+        "test_case_id": "TC-77C9-01",
+        "framework": "PLAYWRIGHT",
+        "language": "TYPESCRIPT",
+        "code": "import { test, expect } from '@playwright/test';\n\n// Traceability: REQ_REF:REQ-4B86EA | AC: Given a user visits the target page, when valid inputs are p\ntest('[POSITIVE] Happy path \u2014 Login Functionality', async ({ page }) => {\n  await page.goto(process.env.BASE_URL || 'http://localhost:3000');\n\n  // Navigate to login\n  await page.getByRole('link', { name: /login|sign in/i }).click();\n\n  // Fill credentials from env\n  await page.getByLabel(/email|username/i).fill(process.env.TEST_USER_EMAIL || 'testuser@example.com');\n  await page.getByLabel(/password/i).fill(process.env.TEST_USER_PASSWORD || '');\n\n  // Submit\n  await page.getByRole('button', { name: /login|sign in/i }).click();\n\n  // Assert: user lands on dashboard\n  await expect(page.getByRole('heading', { name: /dashboard|welcome/i })).toBeVisible();\n  await expect(page).not.toHaveURL(/login/i);\n});",
+        "page_objects": [
+          {
+            "name": "LoginPage",
+            "locators": "getByRole('button'), getByLabel('email'), getByLabel('password')"
+          },
+          {
+            "name": "DashboardPage",
+            "locators": "getByRole('heading'), getByRole('navigation')"
+          }
+        ]
+      },
+      {
+        "id": "AUTO-879ED8",
+        "test_case_id": "TC-5F6B-02",
+        "framework": "PLAYWRIGHT",
+        "language": "TYPESCRIPT",
+        "code": "import { test, expect } from '@playwright/test';\n\n// Traceability: REQ_REF:REQ-4B86EA | AC: Given invalid or missing inputs, when the action is submitte\ntest('[NEGATIVE] Invalid input rejected \u2014 Login Functionality', async ({ page }) => {\n  await page.goto(process.env.BASE_URL || 'http://localhost:3000');\n\n  // Submit with invalid/wrong data\n  await page.getByLabel(/email|username/i).fill('invalid-input@bad.com');\n  await page.getByLabel(/password/i).fill('wrongpassword');\n  await page.getByRole('button', { name: /submit|login|send/i }).click();\n\n  // Assert: error message displayed, no navigation to protected area\n  await expect(page.getByRole('alert')).toBeVisible();\n  await expect(page.getByRole('alert')).toContainText(/invalid|error|incorrect|not found/i);\n  await expect(page).toHaveURL(/(login|reset|error)/i);\n});",
+        "page_objects": [
+          {
+            "name": "LoginPage",
+            "locators": "getByRole('button'), getByLabel('email'), getByLabel('password')"
+          },
+          {
+            "name": "DashboardPage",
+            "locators": "getByRole('heading'), getByRole('navigation')"
+          }
+        ]
+      },
+      {
+        "id": "AUTO-A9511C",
+        "test_case_id": "TC-BFFE-03",
+        "framework": "PLAYWRIGHT",
+        "language": "TYPESCRIPT",
+        "code": "import { test, expect } from '@playwright/test';\n\n// Traceability: REQ_REF:REQ-4B86EA | Boundary: Empty input is rejected\ntest('[BOUNDARY] Edge case input \u2014 Login Functionality', async ({ page }) => {\n  await page.goto(process.env.BASE_URL || 'http://localhost:3000');\n\n  const boundaryInput = 'A'.repeat(128); // max boundary value\n\n  const inputField = page.getByRole('textbox').first();\n  await inputField.fill(boundaryInput);\n  await page.getByRole('button', { name: /submit|save|continue/i }).click();\n\n  // Assert: boundary enforced \u2014 either accepted or rejected with clear message\n  const alert = page.getByRole('alert');\n  const isError = await alert.isVisible().catch(() => false);\n  if (isError) {\n    await expect(alert).toContainText(/too long|maximum|limit/i);\n  } else {\n    await expect(page.getByRole('status')).toContainText(/success|saved/i);\n  }\n});",
+        "page_objects": [
+          {
+            "name": "LoginPage",
+            "locators": "getByRole('button'), getByLabel('email'), getByLabel('password')"
+          },
+          {
+            "name": "DashboardPage",
+            "locators": "getByRole('heading'), getByRole('navigation')"
+          }
+        ]
+      },
+      {
+        "id": "AUTO-ADF0CF",
+        "test_case_id": "TC-1368-04",
+        "framework": "PLAYWRIGHT",
+        "language": "TYPESCRIPT",
+        "code": "import { test, expect } from '@playwright/test';\n\n// Traceability: REQ_REF:REQ-4B86EA | Validation\ntest('[VALIDATION] Required field enforcement \u2014 Login Functionality', async ({ page }) => {\n  await page.goto(process.env.BASE_URL || 'http://localhost:3000');\n\n  // Submit empty form without filling required fields\n  await page.getByRole('button', { name: /submit|save|continue/i }).click();\n\n  // Assert: validation messages appear for each required field\n  const validationMessages = page.locator('[aria-invalid=\"true\"], .error-message, [role=\"alert\"]');\n  await expect(validationMessages.first()).toBeVisible();\n  await expect(page).toHaveURL(/(form|register|login|reset)/i); // still on same page\n});",
+        "page_objects": [
+          {
+            "name": "LoginPage",
+            "locators": "getByRole('button'), getByLabel('email'), getByLabel('password')"
+          },
+          {
+            "name": "DashboardPage",
+            "locators": "getByRole('heading'), getByRole('navigation')"
+          }
+        ]
+      },
+      {
+        "id": "AUTO-E8C1E9",
+        "test_case_id": "TC-5509-05",
+        "framework": "PLAYWRIGHT",
+        "language": "TYPESCRIPT",
+        "code": "import { test, expect } from '@playwright/test';\n\n// Traceability: REQ_REF:REQ-4B86EA | Security\ntest('[SECURITY] Unauthorized access blocked \u2014 Login Functionality', async ({ page }) => {\n  // Clear all cookies and session storage\n  await page.context().clearCookies();\n\n  // Attempt direct navigation to a protected resource\n  const protectedUrl = `${process.env.BASE_URL || 'http://localhost:3000'}/dashboard`;\n  await page.goto(protectedUrl);\n\n  // Assert: redirected to login or receives 401\n  await expect(page).toHaveURL(/login|signin|unauthorized/i);\n  await expect(page.getByRole('heading', { name: /login|sign in/i })).toBeVisible();\n});",
+        "page_objects": [
+          {
+            "name": "LoginPage",
+            "locators": "getByRole('button'), getByLabel('email'), getByLabel('password')"
+          },
+          {
+            "name": "DashboardPage",
+            "locators": "getByRole('heading'), getByRole('navigation')"
+          }
+        ]
+      }
+    ],
+    "failure_analyses": [
+      {
+        "execution_id": "EXEC-70E76A",
+        "classification": "AUTOMATION_DEFECT",
+        "confidence": 0.93,
+        "root_cause": "A Playwright locator timed out \u2014 the DOM element was not found using the current selector. Likely caused by a UI change in the application.",
+        "evidence": [
+          "Locator 'getByRole('textbox').first()' timed out after 5000ms \u2014 element not found. AUTOMATION_DEFECT: locator may need update.",
+          "TimeoutError: locator.fill: Timeout 5000ms exceeded.\nCall log:\n  - waiting for getByRole('textbox').first()",
+          "Test type: BOUNDARY",
+          "Duration: 5118.2ms"
+        ],
+        "suggested_fix": "Replace generic locator with a more stable semantic locator (getByTestId or getByRole).",
+        "can_self_heal": true,
+        "jira_ticket_key": "BUG-AADD",
+        "jira_ticket_url": "https://jira.company.com/browse/BUG-AADD"
+      },
+      {
+        "execution_id": "EXEC-5C4F53",
+        "classification": "UNKNOWN",
+        "confidence": 0.5,
+        "root_cause": "Insufficient evidence to classify failure. Review full trace.",
+        "evidence": [
+          "Expected URL to match /login|signin|unauthorized/i but navigated to /dashboard \u2014 APPLICATION DEFECT detected",
+          "Error: expect(page).toHaveURL(expected)\n  Expected pattern: /login|signin|unauthorized/i\n  Received: 'http://localhost:3000/dashboard'",
+          "Test type: SECURITY",
+          "Duration: 2396.8ms"
+        ],
+        "suggested_fix": "Gather more evidence \u2014 enable Playwright trace and screenshot.",
+        "can_self_heal": false,
+        "jira_ticket_key": "BUG-D533",
+        "jira_ticket_url": "https://jira.company.com/browse/BUG-D533"
+      }
+    ]
+  }
+]

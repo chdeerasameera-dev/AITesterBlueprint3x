@@ -1,0 +1,69 @@
+# AI QA Engineer Agent — Cursor/Agent Rules
+
+## Core rules
+
+1. Build incrementally. Do not implement all phases in one pass.
+2. Never invent requirements, business rules, APIs, or application behavior.
+3. Keep deterministic quality checks separate from LLM reasoning.
+4. Never allow an LLM unrestricted shell or filesystem access.
+5. Use an allowlisted tool registry.
+6. Never expose secrets in source, logs, prompts, screenshots, or reports.
+7. Never silently modify generated automation.
+8. Self-healing must produce a proposal and validation result before applying changes.
+9. Destructive browser/API actions require explicit permission.
+10. Never expose hidden chain-of-thought. Store concise action, evidence, decision, confidence, and result.
+11. Every artifact must retain traceability to its source requirement.
+12. Every AI output must be validated against a Pydantic/schema model before persistence.
+13. Prefer deterministic rules when a deterministic rule can answer the question.
+14. LLM outputs must never override critical deterministic security or quality findings.
+15. Keep Jira, Azure DevOps, Playwright, and Bruno integrations behind interfaces.
+16. Do not hardcode environment URLs, credentials, API keys, or tokens.
+17. Prefer stable Playwright locators: role, label, test ID, stable CSS, then XPath only when necessary.
+18. Do not use `page.waitForTimeout()` in generated production tests.
+19. Generated tests must contain meaningful assertions.
+20. Do not add tests for functionality not present in the source requirement.
+21. Every requirement quality score must include evidence and issues.
+22. Scores must not hide critical blocking issues.
+23. Every test quality evaluation must report coverage gaps and duplicates.
+24. Automation quality must combine static analysis, framework rules, and AI review.
+25. All critical paths must have unit and integration tests.
+26. Add/update documentation when architecture or behavior changes.
+27. Run relevant tests and lint/type checks before declaring a phase complete.
+28. Do not introduce dependencies without a clear reason.
+29. Keep functions small and responsibilities isolated.
+30. Prefer explicit error handling over silent fallback behavior.
+
+## Quality gate semantics
+
+READY:
+No critical issues and score >= 90.
+
+REVIEW_RECOMMENDED:
+No critical issues and score 75–89.
+
+NEEDS_CLARIFICATION:
+Non-critical gaps exist and score 50–74.
+
+NOT_READY:
+Any critical issue exists or score < 50.
+
+Critical issue examples:
+- Expected behavior missing
+- Contradictory business rule
+- Security requirement unclear for a security-sensitive operation
+- Unresolved source conflict
+- Automation contains hardcoded secret
+- Generated test has no meaningful assertion
+
+## Development behavior
+
+When starting a task:
+1. Inspect existing files.
+2. Identify the smallest implementation slice.
+3. Implement.
+4. Add tests.
+5. Run validation.
+6. Update documentation if needed.
+7. Report what changed and what remains.
+
+Do not rewrite unrelated files.
