@@ -117,8 +117,8 @@ powershell -File start.ps1
 
 ## 5. Demo (Vercel / Cloudflare Links)
 
-- **Live Production Demo**: [https://frontend-six-chi-j680r5043t.vercel.app](https://frontend-six-chi-j680r5043t.vercel.app)
-- **Preview Link**: [https://frontend-4jgrt8crw-deera-s-projects.vercel.app](https://frontend-4jgrt8crw-deera-s-projects.vercel.app)
+- **Live Production Demo**: [https://aiqaengineer-deera-s-projects.vercel.app](https://aiqaengineer-deera-s-projects.vercel.app)
+- **Secondary Alias**: [https://frontend-six-chi-j680r5043t.vercel.app](https://frontend-six-chi-j680r5043t.vercel.app)
 - **Custom Hostname Target**: [https://aiqaengineeragent.deera.com](https://aiqaengineeragent.deera.com)
 - **GitHub Repository**: [https://github.com/chdeerasameera-dev/AITesterBlueprint3x](https://github.com/chdeerasameera-dev/AITesterBlueprint3x)
 
