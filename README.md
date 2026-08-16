@@ -120,6 +120,17 @@ powershell -File start.ps1
 - **Live Hostname / Demo URL**: [https://aiqaengineeragent.deera.com](https://aiqaengineeragent.deera.com)
 - **Repository URL**: [https://github.com/chdeerasameera-dev/AITesterBlueprint3x](https://github.com/chdeerasameera-dev/AITesterBlueprint3x)
 
+### Deployment to Cloudflare Pages:
+```powershell
+# Build frontend static assets
+cd frontend
+npm run build
+
+# Deploy to Cloudflare Pages (set CLOUDFLARE_API_TOKEN or run interactive login)
+$env:CLOUDFLARE_API_TOKEN="<YOUR_CLOUDFLARE_API_TOKEN>"
+npx wrangler pages deploy dist --project-name=aiqaengineeragent
+```
+
 ---
 
 ## 6. Screenshots & Document Workflow
