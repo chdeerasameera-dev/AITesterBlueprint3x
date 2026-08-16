@@ -115,10 +115,12 @@ powershell -File start.ps1
 
 ---
 
-## 5. Demo (Cloudflare Link)
+## 5. Demo (Vercel / Cloudflare Links)
 
-- **Live Hostname / Demo URL**: [https://aiqaengineeragent.deera.com](https://aiqaengineeragent.deera.com)
-- **Repository URL**: [https://github.com/chdeerasameera-dev/AITesterBlueprint3x](https://github.com/chdeerasameera-dev/AITesterBlueprint3x)
+- **Live Production Demo**: [https://frontend-nu-ashen.vercel.app](https://frontend-nu-ashen.vercel.app)
+- **Preview Link**: [https://frontend-dyqaf2zs4-deera-s-projects.vercel.app](https://frontend-dyqaf2zs4-deera-s-projects.vercel.app)
+- **Custom Hostname Target**: [https://aiqaengineeragent.deera.com](https://aiqaengineeragent.deera.com)
+- **GitHub Repository**: [https://github.com/chdeerasameera-dev/AITesterBlueprint3x](https://github.com/chdeerasameera-dev/AITesterBlueprint3x)
 
 ### Deployment to Cloudflare Pages:
 ```powershell
