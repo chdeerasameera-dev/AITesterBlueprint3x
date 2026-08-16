@@ -5,10 +5,10 @@ echo   Starting AI QA Engineer Agent Application
 echo ===================================================
 
 set ROOT_DIR=%~dp0
-set PYTHONPATH=E:\PyEnv\site-packages;%ROOT_DIR%backend
+set PYTHONPATH=%ROOT_DIR%backend;%PYTHONPATH%;E:\PyEnv\site-packages
 
 echo Starting Backend Server on http://localhost:8000 ...
-start "AI QA Backend" cmd /k "cd /d "%ROOT_DIR%backend" && set PYTHONPATH=E:\PyEnv\site-packages;%ROOT_DIR%backend && C:\Python\Python314\python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+start "AI QA Backend" cmd /k "cd /d "%ROOT_DIR%backend" && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
 
 echo Starting Frontend Server on http://localhost:5173 ...
 start "AI QA Frontend" cmd /k "cd /d "%ROOT_DIR%frontend" && npm run dev"
