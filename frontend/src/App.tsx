@@ -1614,7 +1614,7 @@ export function App() {
       );
     }
 
-    if (tab === 'traceability') {
+    if ((tab as string) === 'traceability') {
       const reqTitle = pipelineData?.requirement?.title || 'User Story Requirement';
       const tcs = pipelineData?.test_cases ?? pipelineData?.pipeline_results?.[0]?.test_cases ?? [];
       const scripts = pipelineData?.automation_scripts ?? pipelineData?.pipeline_results?.[0]?.automation_scripts ?? [];
