@@ -561,12 +561,16 @@ async def create_project(proj: ProjectModel):
     return {"status": "created", "project": new_proj}
 
 @app.get("/api/analytics/history")
-async def get_execution_history():
-    total_runs = len(DB_EXECUTION_HISTORY)
-    total_tests = sum(h["total_tests"] for h in DB_EXECUTION_HISTORY)
-    total_passed = sum(h["passed"] for h in DB_EXECUTION_HISTORY)
-    total_failed = sum(h["failed"] for h in DB_EXECUTION_HISTORY)
-    avg_quality = round(sum(h["automation_quality_avg"] for h in DB_EXECUTION_HISTORY) / total_runs, 1) if total_runs else 92.5
+async def get_execution_history(project_id: Optional[str] = None):
+    history_items = DB_EXECUTION_HISTORY
+    if project_id:
+        history_items = [h for h in DB_EXECUTION_HISTORY if h.get("project_id") == project_id]
+
+    total_runs = len(history_items)
+    total_tests = sum(h["total_tests"] for h in history_items)
+    total_passed = sum(h["passed"] for h in history_items)
+    total_failed = sum(h["failed"] for h in history_items)
+    avg_quality = round(sum(h["automation_quality_avg"] for h in history_items) / total_runs, 1) if total_runs else 92.5
     overall_pass_rate = round((total_passed / total_tests) * 100, 1) if total_tests else 100.0
 
     return {
@@ -577,10 +581,10 @@ async def get_execution_history():
             "total_failed": total_failed,
             "overall_pass_rate": overall_pass_rate,
             "avg_automation_quality": avg_quality,
-            "flaky_tests_count": sum(1 for h in DB_EXECUTION_HISTORY for f in h.get("failure_analyses", []) if f.get("classification") == "AUTOMATION_DEFECT"),
-            "app_defects_count": sum(1 for h in DB_EXECUTION_HISTORY for f in h.get("failure_analyses", []) if f.get("classification") == "APPLICATION_DEFECT")
+            "flaky_tests_count": sum(1 for h in history_items for f in h.get("failure_analyses", []) if f.get("classification") == "AUTOMATION_DEFECT"),
+            "app_defects_count": sum(1 for h in history_items for f in h.get("failure_analyses", []) if f.get("classification") == "APPLICATION_DEFECT")
         },
-        "history": DB_EXECUTION_HISTORY
+        "history": history_items
     }
 
 # ─── Quality Endpoints ────────────────────────────────────────────────────────

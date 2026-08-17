@@ -1004,6 +1004,8 @@ export function App() {
   const [newProjDesc, setNewProjDesc] = useState('');
   const [creatingProj, setCreatingProj] = useState(false);
 
+  const [projectAnalytics, setProjectAnalytics] = useState<any>(null);
+
   // Fetch projects from backend
   const fetchProjects = useCallback(async () => {
     try {
@@ -1019,9 +1021,27 @@ export function App() {
     }
   }, []);
 
+  const fetchProjectAnalytics = useCallback(async (projId: string) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/analytics/history?project_id=${projId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setProjectAnalytics(data);
+      }
+    } catch (e) {
+      console.warn('Analytics history fetch error:', e);
+    }
+  }, []);
+
   useEffect(() => {
     fetchProjects();
   }, [fetchProjects]);
+
+  useEffect(() => {
+    if (selectedProjectId) {
+      fetchProjectAnalytics(selectedProjectId);
+    }
+  }, [selectedProjectId, fetchProjectAnalytics]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -1336,18 +1356,23 @@ export function App() {
     }
 
     if (tab === 'reports') {
-      const execs = (pipelineData?.pipeline_results ?? []).flatMap((r: any) => r.executions ?? []).concat(pipelineData?.executions ?? []);
-      const passed = execs.filter((e: any) => e.status === 'PASSED').length;
-      const failed = execs.length - passed;
-      const passRate = execs.length ? Math.round((passed / execs.length) * 100) : 0;
-      const autoScore = pipelineData?.summary?.automation_quality_score ?? 92.5;
+      const summary = projectAnalytics?.summary || {};
+      const historyRuns = projectAnalytics?.history || [];
+
+      // Extract pipeline execution objects for current selected project
+      const latestRun = historyRuns[historyRuns.length - 1] || {};
+      const execs = latestRun.executions || (pipelineData?.executions ?? pipelineData?.pipeline_results?.[0]?.executions ?? []);
+      const passed = summary.total_passed ?? execs.filter((e: any) => e.status === 'PASSED').length;
+      const failed = summary.total_failed ?? (execs.length - passed);
+      const passRate = summary.overall_pass_rate ?? (execs.length ? Math.round((passed / execs.length) * 100) : 0);
+      const autoScore = summary.avg_automation_quality ?? (pipelineData?.summary?.automation_quality_score ?? 92.5);
 
       return (
         <div className="p-8 max-w-5xl mx-auto space-y-6">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-bold text-zinc-100">Execution Analytics & Quality Reports</h2>
-              <p className="text-sm text-zinc-500 mt-0.5">Aggregated metrics, automation quality trends, and execution details.</p>
+              <p className="text-sm text-zinc-500 mt-0.5">Aggregated metrics and automation quality trends for <span className="font-semibold text-zinc-200">{selectedProject?.name}</span>.</p>
             </div>
             <button
               onClick={async () => {
@@ -1355,7 +1380,7 @@ export function App() {
                   const res = await fetch(`${API_BASE_URL}/api/reports/download-html`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'text/html' },
-                    body: JSON.stringify(pipelineData || {})
+                    body: JSON.stringify(pipelineData || latestRun || {})
                   });
                   const htmlText = await res.text();
                   const blob = new Blob([htmlText], { type: 'text/html;charset=utf-8' });
@@ -1377,16 +1402,16 @@ export function App() {
 
           <div className="grid grid-cols-4 gap-4">
             <div className="bg-zinc-900/60 border border-zinc-700/40 rounded-xl p-4 text-center">
-              <div className="text-2xl font-black text-zinc-100">{execs.length || 5}</div>
-              <div className="text-xs text-zinc-500 mt-1">Total Executions</div>
+              <div className="text-2xl font-black text-zinc-100">{summary.total_pipeline_runs || (pipelineData ? 1 : 0)}</div>
+              <div className="text-xs text-zinc-500 mt-1">Project Pipeline Runs</div>
             </div>
             <div className="bg-zinc-900/60 border border-zinc-700/40 rounded-xl p-4 text-center">
-              <div className="text-2xl font-black text-emerald-400">{passed || 4}</div>
-              <div className="text-xs text-zinc-500 mt-1">Passed Tests</div>
+              <div className="text-2xl font-black text-emerald-400">{passed}</div>
+              <div className="text-xs text-zinc-500 mt-1">Passed Scenarios</div>
             </div>
             <div className="bg-zinc-900/60 border border-zinc-700/40 rounded-xl p-4 text-center">
-              <div className="text-2xl font-black text-red-400">{failed || 1}</div>
-              <div className="text-xs text-zinc-500 mt-1">Failed Tests</div>
+              <div className="text-2xl font-black text-red-400">{failed}</div>
+              <div className="text-xs text-zinc-500 mt-1">Failed Scenarios</div>
             </div>
             <div className="bg-zinc-900/60 border border-zinc-700/40 rounded-xl p-4 text-center">
               <div className="text-2xl font-black text-[#5c6ac4]">{autoScore}%</div>
@@ -1395,7 +1420,7 @@ export function App() {
           </div>
 
           <div className="bg-zinc-900/60 border border-zinc-700/40 rounded-xl p-6 space-y-4">
-            <h3 className="text-sm font-bold text-zinc-200">Automation Script Quality Breakdown</h3>
+            <h3 className="text-sm font-bold text-zinc-200">Automation Script Quality Breakdown ({selectedProject?.name})</h3>
             <div className="space-y-3">
               {[
                 { rule: 'Playwright Auto-Waiting', score: '100%', status: 'PASS' },
@@ -1589,19 +1614,99 @@ export function App() {
       );
     }
 
-    if (tab !== 'settings') {
+    if (tab === 'traceability') {
+      const reqTitle = pipelineData?.requirement?.title || 'User Story Requirement';
+      const tcs = pipelineData?.test_cases ?? pipelineData?.pipeline_results?.[0]?.test_cases ?? [];
+      const scripts = pipelineData?.automation_scripts ?? pipelineData?.pipeline_results?.[0]?.automation_scripts ?? [];
+      const execs = pipelineData?.executions ?? pipelineData?.pipeline_results?.[0]?.executions ?? [];
+      const analyses = pipelineData?.failure_analyses ?? pipelineData?.pipeline_results?.[0]?.failure_analyses ?? [];
+
       return (
-        <div className="p-8 max-w-5xl mx-auto">
-          <h2 className="text-lg font-bold text-zinc-100 mb-4 capitalize">{tab}</h2>
-          {!pipelineData ? <p className="text-sm text-zinc-500">Run a pipeline from the Chat view to see data here.</p> : (
-            <pre className="text-xs text-zinc-400 bg-zinc-900/60 border border-zinc-700/40 rounded-xl p-4 overflow-auto max-h-[70vh]">
-              {JSON.stringify(pipelineData, null, 2)}
-            </pre>
-          )}
+        <div className="p-8 max-w-6xl mx-auto space-y-6">
+          <div>
+            <h2 className="text-xl font-bold text-zinc-100">End-to-End Requirement Traceability Matrix</h2>
+            <p className="text-sm text-zinc-500 mt-0.5">Bi-directional mapping from Requirement → Test Cases → Playwright Scripts → Execution → Jira Defects.</p>
+          </div>
+
+          <div className="bg-zinc-900/60 border border-zinc-700/40 rounded-xl overflow-hidden shadow-lg">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-zinc-950/80 text-zinc-400 font-mono border-b border-zinc-800 uppercase tracking-wider">
+                  <tr>
+                    <th className="p-4">Requirement</th>
+                    <th className="p-4">Jira / BDD Scenario</th>
+                    <th className="p-4">Automation Script</th>
+                    <th className="p-4">Execution Status</th>
+                    <th className="p-4">Jira Defect</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-800/60 text-zinc-300">
+                  {tcs.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="p-6 text-center text-zinc-500">
+                        No active traceability mapping found for <span className="font-semibold text-zinc-300">{selectedProject?.name}</span>. Run a pipeline to generate traceability links.
+                      </td>
+                    </tr>
+                  ) : (
+                    tcs.map((tc: any, idx: number) => {
+                      const script = scripts.find((s: any) => s.test_case_id === tc.id) || scripts[idx];
+                      const exec = execs.find((e: any) => e.test_case_id === tc.id) || execs[idx];
+                      const analysis = analyses.find((a: any) => a.execution_id === exec?.execution_id) || analyses[idx];
+
+                      return (
+                        <tr key={tc.id || idx} className="hover:bg-zinc-800/30 transition">
+                          <td className="p-4 font-medium text-zinc-200 max-w-xs truncate">{reqTitle}</td>
+                          <td className="p-4">
+                            <span className="font-mono text-[#5c6ac4] font-bold block">{tc.id}</span>
+                            <span className="text-zinc-400 truncate block max-w-xs">{tc.title}</span>
+                          </td>
+                          <td className="p-4 font-mono text-purple-400">
+                            {script?.id ? `${script.id} (Playwright TS)` : '—'}
+                          </td>
+                          <td className="p-4">
+                            {exec?.status === 'PASSED' && (
+                              <span className="bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded font-bold">PASSED</span>
+                            )}
+                            {exec?.status === 'FAILED' && (
+                              <span className="bg-red-500/15 text-red-400 border border-red-500/30 px-2 py-0.5 rounded font-bold">FAILED</span>
+                            )}
+                            {!exec && <span className="text-zinc-500">PENDING</span>}
+                          </td>
+                          <td className="p-4 font-mono">
+                            {analysis?.jira_ticket_key ? (
+                              <a href={analysis.jira_ticket_url} target="_blank" rel="noreferrer" className="text-blue-400 hover:underline flex items-center gap-1">
+                                <ExternalLink className="w-3 h-3" /> {analysis.jira_ticket_key}
+                              </a>
+                            ) : (
+                              <span className="text-zinc-600">—</span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       );
     }
-    return null;
+
+    if (tab === 'settings') {
+      return null;
+    }
+
+    return (
+      <div className="p-8 max-w-5xl mx-auto">
+        <h2 className="text-lg font-bold text-zinc-100 mb-4 capitalize">{tab}</h2>
+        {!pipelineData ? <p className="text-sm text-zinc-500">Run a pipeline from the Chat view to see data here.</p> : (
+          <pre className="text-xs text-zinc-400 bg-zinc-900/60 border border-zinc-700/40 rounded-xl p-4 overflow-auto max-h-[70vh]">
+            {JSON.stringify(pipelineData, null, 2)}
+          </pre>
+        )}
+      </div>
+    );
   };
 
   return (
