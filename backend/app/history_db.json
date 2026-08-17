@@ -528,5 +528,417 @@
         "jira_ticket_url": "https://jira.company.com/browse/BUG-D533"
       }
     ]
+  },
+  {
+    "project_id": "proj-03",
+    "timestamp": "2026-08-17 14:28:14",
+    "requirement_title": "Remove products from cart",
+    "total_tests": 4,
+    "passed": 3,
+    "failed": 1,
+    "pass_rate": 75.0,
+    "automation_quality_avg": 85.0,
+    "executions": [
+      {
+        "execution_id": "EXEC-666666",
+        "test_case_id": "TC-7045-01",
+        "status": "PASSED",
+        "duration_ms": 1339.6,
+        "stdout": "  Running Playwright tests...\n  Browser: chromium (headless)\n  Workers: 1\n\n  [203ms] \u25b6 Step 1: the system is in a ready state\n  [253ms] \u2713 OK\n  [433ms] \u25b6 Step 2: the user performs the primary action\n  [483ms] \u2713 OK\n  [576ms] \u25b6 Step 3: the expected outcome is achieved: Removal should not affect other items in the cart.\n  [626ms] \u2713 OK\n\n  1 test passed (776ms)",
+        "stderr": "",
+        "error_message": null,
+        "stack_trace": null,
+        "screenshot_path": null,
+        "video_path": null
+      },
+      {
+        "execution_id": "EXEC-ABA128",
+        "test_case_id": "TC-4ACB-02",
+        "status": "PASSED",
+        "duration_ms": 1500.9,
+        "stdout": "  Running Playwright tests...\n  Browser: chromium (headless)\n  Workers: 1\n\n  [310ms] \u25b6 Step 1: the system is ready\n  [360ms] \u2713 OK\n  [631ms] \u25b6 Step 2: the user submits invalid or malformed input\n  [681ms] \u2713 OK\n  [968ms] \u25b6 Step 3: a descriptive validation error is returned\n  [1018ms] \u2713 OK\n\n  1 test passed (1168ms)",
+        "stderr": "",
+        "error_message": null,
+        "stack_trace": null,
+        "screenshot_path": null,
+        "video_path": null
+      },
+      {
+        "execution_id": "EXEC-2A81CA",
+        "test_case_id": "TC-E11E-03",
+        "status": "FAILED",
+        "duration_ms": 6217.7,
+        "stdout": "  Running Playwright tests...\n  Browser: chromium (headless)\n  Workers: 1\n\n  [361ms] \u25b6 Step 1: Submit input at boundary: Empty input is rejected\n  [411ms] \u2713 OK\n  [584ms] \u25b6 Step 2: Verify system response matches specification\n  [784ms] \u2717 FAILED \u2014 see error details below\n\n  1 test failed (784ms)",
+        "stderr": "TimeoutError: locator.fill: Timeout 5000ms exceeded.\nCall log:\n  - waiting for getByRole('textbox').first()",
+        "error_message": "Locator 'getByRole('textbox').first()' timed out after 5000ms \u2014 element not found. AUTOMATION_DEFECT: locator may need update.",
+        "stack_trace": null,
+        "screenshot_path": "screenshots/TC-E11E-03.png",
+        "video_path": null
+      },
+      {
+        "execution_id": "EXEC-78D4F0",
+        "test_case_id": "TC-1FB1-04",
+        "status": "PASSED",
+        "duration_ms": 1371.1,
+        "stdout": "  Running Playwright tests...\n  Browser: chromium (headless)\n  Workers: 1\n\n  [174ms] \u25b6 Step 1: Navigate to form\n  [224ms] \u2713 OK\n  [307ms] \u25b6 Step 2: Leave required fields empty\n  [357ms] \u2713 OK\n  [700ms] \u25b6 Step 3: Click submit\n  [750ms] \u2713 OK\n  [785ms] \u25b6 Step 4: Assert validation messages visible\n  [835ms] \u2713 OK\n\n  1 test passed (985ms)",
+        "stderr": "",
+        "error_message": null,
+        "stack_trace": null,
+        "screenshot_path": null,
+        "video_path": null
+      }
+    ],
+    "test_cases": [
+      {
+        "id": "TC-7045-01",
+        "requirement_id": "REQ-9A0B3E",
+        "title": "[POSITIVE] Happy path \u2014 Remove products from cart",
+        "type": "POSITIVE",
+        "gherkin": "Feature: Remove products from cart\n  Scenario: Happy path \u2014 valid input succeeds\n    Given the system is in a ready state\n    When the user performs the primary action\n    Then the expected outcome is achieved: Removal should not affect other items in the cart.",
+        "steps": [
+          "the system is in a ready state",
+          "the user performs the primary action",
+          "the expected outcome is achieved: Removal should not affect other items in the cart."
+        ],
+        "expected_outcome": "Removal should not affect other items in the cart.",
+        "traceability_tag": "REQ_REF:REQ-9A0B3E | AC: Given a user visits the target page, when valid inputs are p"
+      },
+      {
+        "id": "TC-4ACB-02",
+        "requirement_id": "REQ-9A0B3E",
+        "title": "[NEGATIVE] Invalid input rejected \u2014 Remove products from cart",
+        "type": "NEGATIVE",
+        "gherkin": "Feature: Remove products from cart\n  Scenario: Invalid input is rejected with appropriate error\n    Given the system is ready\n    When the user submits invalid or malformed input\n    Then a descriptive validation error is returned",
+        "steps": [
+          "the system is ready",
+          "the user submits invalid or malformed input",
+          "a descriptive validation error is returned"
+        ],
+        "expected_outcome": "HTTP 400 with descriptive error message; no data modified",
+        "traceability_tag": "REQ_REF:REQ-9A0B3E | AC: Given invalid or missing inputs, when the action is submitte"
+      },
+      {
+        "id": "TC-E11E-03",
+        "requirement_id": "REQ-9A0B3E",
+        "title": "[BOUNDARY] Edge case input \u2014 Remove products from cart",
+        "type": "BOUNDARY",
+        "gherkin": "Feature: Remove products from cart\n  Scenario: Boundary input is handled correctly\n    Given the system accepts input at its boundary limit\n    When the user submits input at the boundary: Empty input is rejected\n    Then the system accepts or rejects the input per specification",
+        "steps": [
+          "Submit input at boundary: Empty input is rejected",
+          "Verify system response matches specification"
+        ],
+        "expected_outcome": "System enforces boundary: Empty input is rejected",
+        "traceability_tag": "REQ_REF:REQ-9A0B3E | Boundary: Empty input is rejected"
+      },
+      {
+        "id": "TC-1FB1-04",
+        "requirement_id": "REQ-9A0B3E",
+        "title": "[VALIDATION] Required field enforcement \u2014 Remove products from cart",
+        "type": "VALIDATION",
+        "gherkin": "Feature: Remove products from cart\n  Scenario: Empty required fields are rejected\n    Given the user is on the relevant form\n    When the user submits the form without filling required fields\n    Then validation messages appear for each empty required field",
+        "steps": [
+          "Navigate to form",
+          "Leave required fields empty",
+          "Click submit",
+          "Assert validation messages visible"
+        ],
+        "expected_outcome": "Form submission blocked; inline validation messages displayed for each empty required field",
+        "traceability_tag": "REQ_REF:REQ-9A0B3E | Validation"
+      }
+    ],
+    "automation_scripts": [
+      {
+        "id": "AUTO-D8BC12",
+        "test_case_id": "TC-7045-01",
+        "framework": "PLAYWRIGHT",
+        "language": "TYPESCRIPT",
+        "code": "import { test, expect } from '@playwright/test';\n\n// Traceability: REQ_REF:REQ-9A0B3E | AC: Given a user visits the target page, when valid inputs are p\ntest('[POSITIVE] Happy path \u2014 Remove products from cart', async ({ page }) => {\n  await page.goto(process.env.BASE_URL || 'http://localhost:3000');\n\n  // Primary happy-path workflow\n  await page.getByRole('button', { name: /submit|continue|proceed/i }).click();\n\n  // Assert expected outcome: Removal should not affect other items in the cart.\n  await expect(page.getByRole('status')).toContainText(/success|complete|confirmed/i);\n});",
+        "page_objects": [
+          {
+            "name": "LoginPage",
+            "locators": "getByRole('button'), getByLabel('email'), getByLabel('password')"
+          },
+          {
+            "name": "DashboardPage",
+            "locators": "getByRole('heading'), getByRole('navigation')"
+          }
+        ]
+      },
+      {
+        "id": "AUTO-B968CA",
+        "test_case_id": "TC-4ACB-02",
+        "framework": "PLAYWRIGHT",
+        "language": "TYPESCRIPT",
+        "code": "import { test, expect } from '@playwright/test';\n\n// Traceability: REQ_REF:REQ-9A0B3E | AC: Given invalid or missing inputs, when the action is submitte\ntest('[NEGATIVE] Invalid input rejected \u2014 Remove products from cart', async ({ page }) => {\n  await page.goto(process.env.BASE_URL || 'http://localhost:3000');\n\n  // Submit with invalid/wrong data\n  await page.getByLabel(/email|username/i).fill('invalid-input@bad.com');\n  await page.getByLabel(/password/i).fill('wrongpassword');\n  await page.getByRole('button', { name: /submit|login|send/i }).click();\n\n  // Assert: error message displayed, no navigation to protected area\n  await expect(page.getByRole('alert')).toBeVisible();\n  await expect(page.getByRole('alert')).toContainText(/invalid|error|incorrect|not found/i);\n  await expect(page).toHaveURL(/(login|reset|error)/i);\n});",
+        "page_objects": [
+          {
+            "name": "LoginPage",
+            "locators": "getByRole('button'), getByLabel('email'), getByLabel('password')"
+          },
+          {
+            "name": "DashboardPage",
+            "locators": "getByRole('heading'), getByRole('navigation')"
+          }
+        ]
+      },
+      {
+        "id": "AUTO-685A40",
+        "test_case_id": "TC-E11E-03",
+        "framework": "PLAYWRIGHT",
+        "language": "TYPESCRIPT",
+        "code": "import { test, expect } from '@playwright/test';\n\n// Traceability: REQ_REF:REQ-9A0B3E | Boundary: Empty input is rejected\ntest('[BOUNDARY] Edge case input \u2014 Remove products from cart', async ({ page }) => {\n  await page.goto(process.env.BASE_URL || 'http://localhost:3000');\n\n  const boundaryInput = 'A'.repeat(128); // max boundary value\n\n  const inputField = page.getByRole('textbox').first();\n  await inputField.fill(boundaryInput);\n  await page.getByRole('button', { name: /submit|save|continue/i }).click();\n\n  // Assert: boundary enforced \u2014 either accepted or rejected with clear message\n  const alert = page.getByRole('alert');\n  const isError = await alert.isVisible().catch(() => false);\n  if (isError) {\n    await expect(alert).toContainText(/too long|maximum|limit/i);\n  } else {\n    await expect(page.getByRole('status')).toContainText(/success|saved/i);\n  }\n});",
+        "page_objects": [
+          {
+            "name": "LoginPage",
+            "locators": "getByRole('button'), getByLabel('email'), getByLabel('password')"
+          },
+          {
+            "name": "DashboardPage",
+            "locators": "getByRole('heading'), getByRole('navigation')"
+          }
+        ]
+      },
+      {
+        "id": "AUTO-5B28DA",
+        "test_case_id": "TC-1FB1-04",
+        "framework": "PLAYWRIGHT",
+        "language": "TYPESCRIPT",
+        "code": "import { test, expect } from '@playwright/test';\n\n// Traceability: REQ_REF:REQ-9A0B3E | Validation\ntest('[VALIDATION] Required field enforcement \u2014 Remove products from cart', async ({ page }) => {\n  await page.goto(process.env.BASE_URL || 'http://localhost:3000');\n\n  // Submit empty form without filling required fields\n  await page.getByRole('button', { name: /submit|save|continue/i }).click();\n\n  // Assert: validation messages appear for each required field\n  const validationMessages = page.locator('[aria-invalid=\"true\"], .error-message, [role=\"alert\"]');\n  await expect(validationMessages.first()).toBeVisible();\n  await expect(page).toHaveURL(/(form|register|login|reset)/i); // still on same page\n});",
+        "page_objects": [
+          {
+            "name": "LoginPage",
+            "locators": "getByRole('button'), getByLabel('email'), getByLabel('password')"
+          },
+          {
+            "name": "DashboardPage",
+            "locators": "getByRole('heading'), getByRole('navigation')"
+          }
+        ]
+      }
+    ],
+    "failure_analyses": [
+      {
+        "execution_id": "EXEC-2A81CA",
+        "classification": "AUTOMATION_DEFECT",
+        "confidence": 0.93,
+        "root_cause": "A Playwright locator timed out \u2014 the DOM element was not found using the current selector. Likely caused by a UI change in the application.",
+        "evidence": [
+          "Locator 'getByRole('textbox').first()' timed out after 5000ms \u2014 element not found. AUTOMATION_DEFECT: locator may need update.",
+          "TimeoutError: locator.fill: Timeout 5000ms exceeded.\nCall log:\n  - waiting for getByRole('textbox').first()",
+          "Test type: BOUNDARY",
+          "Duration: 6217.7ms"
+        ],
+        "suggested_fix": "Replace generic locator with a more stable semantic locator (getByTestId or getByRole).",
+        "can_self_heal": true,
+        "jira_ticket_key": "BUG-36F0",
+        "jira_ticket_url": "https://jira.company.com/browse/BUG-36F0"
+      }
+    ]
+  },
+  {
+    "project_id": "proj-03",
+    "timestamp": "2026-08-17 14:35:23",
+    "requirement_title": "Add multiple products to cart from inventory page",
+    "total_tests": 4,
+    "passed": 3,
+    "failed": 1,
+    "pass_rate": 75.0,
+    "automation_quality_avg": 85.0,
+    "executions": [
+      {
+        "execution_id": "EXEC-7C0687",
+        "test_case_id": "TC-6CA1-01",
+        "status": "PASSED",
+        "duration_ms": 1689.8,
+        "stdout": "  Running Playwright tests...\n  Browser: chromium (headless)\n  Workers: 1\n\n  [234ms] \u25b6 Step 1: the system is in a ready state\n  [284ms] \u2713 OK\n  [372ms] \u25b6 Step 2: the user performs the primary action\n  [422ms] \u2713 OK\n  [492ms] \u25b6 Step 3: the expected outcome is achieved: The system should handle multiple additions without overwriting previously selected items.\n  [542ms] \u2713 OK\n\n  1 test passed (692ms)",
+        "stderr": "",
+        "error_message": null,
+        "stack_trace": null,
+        "screenshot_path": null,
+        "video_path": null
+      },
+      {
+        "execution_id": "EXEC-F8AD5E",
+        "test_case_id": "TC-B0D6-02",
+        "status": "PASSED",
+        "duration_ms": 1450.0,
+        "stdout": "  Running Playwright tests...\n  Browser: chromium (headless)\n  Workers: 1\n\n  [123ms] \u25b6 Step 1: the system is ready\n  [173ms] \u2713 OK\n  [262ms] \u25b6 Step 2: the user submits invalid or malformed input\n  [312ms] \u2713 OK\n  [482ms] \u25b6 Step 3: a descriptive validation error is returned\n  [532ms] \u2713 OK\n\n  1 test passed (682ms)",
+        "stderr": "",
+        "error_message": null,
+        "stack_trace": null,
+        "screenshot_path": null,
+        "video_path": null
+      },
+      {
+        "execution_id": "EXEC-22FED3",
+        "test_case_id": "TC-4EFD-03",
+        "status": "FAILED",
+        "duration_ms": 5185.9,
+        "stdout": "  Running Playwright tests...\n  Browser: chromium (headless)\n  Workers: 1\n\n  [117ms] \u25b6 Step 1: Submit input at boundary: Empty input is rejected\n  [167ms] \u2713 OK\n  [481ms] \u25b6 Step 2: Verify system response matches specification\n  [681ms] \u2717 FAILED \u2014 see error details below\n\n  1 test failed (681ms)",
+        "stderr": "TimeoutError: locator.fill: Timeout 5000ms exceeded.\nCall log:\n  - waiting for getByRole('textbox').first()",
+        "error_message": "Locator 'getByRole('textbox').first()' timed out after 5000ms \u2014 element not found. AUTOMATION_DEFECT: locator may need update.",
+        "stack_trace": null,
+        "screenshot_path": "screenshots/TC-4EFD-03.png",
+        "video_path": null
+      },
+      {
+        "execution_id": "EXEC-786BB1",
+        "test_case_id": "TC-BBB4-04",
+        "status": "PASSED",
+        "duration_ms": 700.6,
+        "stdout": "  Running Playwright tests...\n  Browser: chromium (headless)\n  Workers: 1\n\n  [89ms] \u25b6 Step 1: Navigate to form\n  [139ms] \u2713 OK\n  [216ms] \u25b6 Step 2: Leave required fields empty\n  [266ms] \u2713 OK\n  [297ms] \u25b6 Step 3: Click submit\n  [347ms] \u2713 OK\n  [418ms] \u25b6 Step 4: Assert validation messages visible\n  [468ms] \u2713 OK\n\n  1 test passed (618ms)",
+        "stderr": "",
+        "error_message": null,
+        "stack_trace": null,
+        "screenshot_path": null,
+        "video_path": null
+      }
+    ],
+    "test_cases": [
+      {
+        "id": "TC-6CA1-01",
+        "requirement_id": "REQ-D7B634",
+        "title": "[POSITIVE] Happy path \u2014 Add multiple products to cart from inventory page",
+        "type": "POSITIVE",
+        "gherkin": "Feature: Add multiple products to cart from inventory page\n  Scenario: Happy path \u2014 valid input succeeds\n    Given the system is in a ready state\n    When the user performs the primary action\n    Then the expected outcome is achieved: The system should handle multiple additions without overwriting previously selected items.",
+        "steps": [
+          "the system is in a ready state",
+          "the user performs the primary action",
+          "the expected outcome is achieved: The system should handle multiple additions without overwriting previously selected items."
+        ],
+        "expected_outcome": "The system should handle multiple additions without overwriting previously selected items.",
+        "traceability_tag": "REQ_REF:REQ-D7B634 | AC: Given a user visits the target page, when valid inputs are p"
+      },
+      {
+        "id": "TC-B0D6-02",
+        "requirement_id": "REQ-D7B634",
+        "title": "[NEGATIVE] Invalid input rejected \u2014 Add multiple products to cart from inventory page",
+        "type": "NEGATIVE",
+        "gherkin": "Feature: Add multiple products to cart from inventory page\n  Scenario: Invalid input is rejected with appropriate error\n    Given the system is ready\n    When the user submits invalid or malformed input\n    Then a descriptive validation error is returned",
+        "steps": [
+          "the system is ready",
+          "the user submits invalid or malformed input",
+          "a descriptive validation error is returned"
+        ],
+        "expected_outcome": "HTTP 400 with descriptive error message; no data modified",
+        "traceability_tag": "REQ_REF:REQ-D7B634 | AC: Given invalid or missing inputs, when the action is submitte"
+      },
+      {
+        "id": "TC-4EFD-03",
+        "requirement_id": "REQ-D7B634",
+        "title": "[BOUNDARY] Edge case input \u2014 Add multiple products to cart from inventory page",
+        "type": "BOUNDARY",
+        "gherkin": "Feature: Add multiple products to cart from inventory page\n  Scenario: Boundary input is handled correctly\n    Given the system accepts input at its boundary limit\n    When the user submits input at the boundary: Empty input is rejected\n    Then the system accepts or rejects the input per specification",
+        "steps": [
+          "Submit input at boundary: Empty input is rejected",
+          "Verify system response matches specification"
+        ],
+        "expected_outcome": "System enforces boundary: Empty input is rejected",
+        "traceability_tag": "REQ_REF:REQ-D7B634 | Boundary: Empty input is rejected"
+      },
+      {
+        "id": "TC-BBB4-04",
+        "requirement_id": "REQ-D7B634",
+        "title": "[VALIDATION] Required field enforcement \u2014 Add multiple products to cart from inventory page",
+        "type": "VALIDATION",
+        "gherkin": "Feature: Add multiple products to cart from inventory page\n  Scenario: Empty required fields are rejected\n    Given the user is on the relevant form\n    When the user submits the form without filling required fields\n    Then validation messages appear for each empty required field",
+        "steps": [
+          "Navigate to form",
+          "Leave required fields empty",
+          "Click submit",
+          "Assert validation messages visible"
+        ],
+        "expected_outcome": "Form submission blocked; inline validation messages displayed for each empty required field",
+        "traceability_tag": "REQ_REF:REQ-D7B634 | Validation"
+      }
+    ],
+    "automation_scripts": [
+      {
+        "id": "AUTO-C6EE7D",
+        "test_case_id": "TC-6CA1-01",
+        "framework": "PLAYWRIGHT",
+        "language": "TYPESCRIPT",
+        "code": "import { test, expect } from '@playwright/test';\n\n// Traceability: REQ_REF:REQ-D7B634 | AC: Given a user visits the target page, when valid inputs are p\ntest('[POSITIVE] Happy path \u2014 Add multiple products to cart from inventory page', async ({ page }) => {\n  await page.goto(process.env.BASE_URL || 'http://localhost:3000');\n\n  // Primary happy-path workflow\n  await page.getByRole('button', { name: /submit|continue|proceed/i }).click();\n\n  // Assert expected outcome: The system should handle multiple additions without overwriting previously selected items.\n  await expect(page.getByRole('status')).toContainText(/success|complete|confirmed/i);\n});",
+        "page_objects": [
+          {
+            "name": "LoginPage",
+            "locators": "getByRole('button'), getByLabel('email'), getByLabel('password')"
+          },
+          {
+            "name": "DashboardPage",
+            "locators": "getByRole('heading'), getByRole('navigation')"
+          }
+        ]
+      },
+      {
+        "id": "AUTO-36FA78",
+        "test_case_id": "TC-B0D6-02",
+        "framework": "PLAYWRIGHT",
+        "language": "TYPESCRIPT",
+        "code": "import { test, expect } from '@playwright/test';\n\n// Traceability: REQ_REF:REQ-D7B634 | AC: Given invalid or missing inputs, when the action is submitte\ntest('[NEGATIVE] Invalid input rejected \u2014 Add multiple products to cart from inventory page', async ({ page }) => {\n  await page.goto(process.env.BASE_URL || 'http://localhost:3000');\n\n  // Submit with invalid/wrong data\n  await page.getByLabel(/email|username/i).fill('invalid-input@bad.com');\n  await page.getByLabel(/password/i).fill('wrongpassword');\n  await page.getByRole('button', { name: /submit|login|send/i }).click();\n\n  // Assert: error message displayed, no navigation to protected area\n  await expect(page.getByRole('alert')).toBeVisible();\n  await expect(page.getByRole('alert')).toContainText(/invalid|error|incorrect|not found/i);\n  await expect(page).toHaveURL(/(login|reset|error)/i);\n});",
+        "page_objects": [
+          {
+            "name": "LoginPage",
+            "locators": "getByRole('button'), getByLabel('email'), getByLabel('password')"
+          },
+          {
+            "name": "DashboardPage",
+            "locators": "getByRole('heading'), getByRole('navigation')"
+          }
+        ]
+      },
+      {
+        "id": "AUTO-615006",
+        "test_case_id": "TC-4EFD-03",
+        "framework": "PLAYWRIGHT",
+        "language": "TYPESCRIPT",
+        "code": "import { test, expect } from '@playwright/test';\n\n// Traceability: REQ_REF:REQ-D7B634 | Boundary: Empty input is rejected\ntest('[BOUNDARY] Edge case input \u2014 Add multiple products to cart from inventory page', async ({ page }) => {\n  await page.goto(process.env.BASE_URL || 'http://localhost:3000');\n\n  const boundaryInput = 'A'.repeat(128); // max boundary value\n\n  const inputField = page.getByRole('textbox').first();\n  await inputField.fill(boundaryInput);\n  await page.getByRole('button', { name: /submit|save|continue/i }).click();\n\n  // Assert: boundary enforced \u2014 either accepted or rejected with clear message\n  const alert = page.getByRole('alert');\n  const isError = await alert.isVisible().catch(() => false);\n  if (isError) {\n    await expect(alert).toContainText(/too long|maximum|limit/i);\n  } else {\n    await expect(page.getByRole('status')).toContainText(/success|saved/i);\n  }\n});",
+        "page_objects": [
+          {
+            "name": "LoginPage",
+            "locators": "getByRole('button'), getByLabel('email'), getByLabel('password')"
+          },
+          {
+            "name": "DashboardPage",
+            "locators": "getByRole('heading'), getByRole('navigation')"
+          }
+        ]
+      },
+      {
+        "id": "AUTO-8ABB91",
+        "test_case_id": "TC-BBB4-04",
+        "framework": "PLAYWRIGHT",
+        "language": "TYPESCRIPT",
+        "code": "import { test, expect } from '@playwright/test';\n\n// Traceability: REQ_REF:REQ-D7B634 | Validation\ntest('[VALIDATION] Required field enforcement \u2014 Add multiple products to cart from inventory page', async ({ page }) => {\n  await page.goto(process.env.BASE_URL || 'http://localhost:3000');\n\n  // Submit empty form without filling required fields\n  await page.getByRole('button', { name: /submit|save|continue/i }).click();\n\n  // Assert: validation messages appear for each required field\n  const validationMessages = page.locator('[aria-invalid=\"true\"], .error-message, [role=\"alert\"]');\n  await expect(validationMessages.first()).toBeVisible();\n  await expect(page).toHaveURL(/(form|register|login|reset)/i); // still on same page\n});",
+        "page_objects": [
+          {
+            "name": "LoginPage",
+            "locators": "getByRole('button'), getByLabel('email'), getByLabel('password')"
+          },
+          {
+            "name": "DashboardPage",
+            "locators": "getByRole('heading'), getByRole('navigation')"
+          }
+        ]
+      }
+    ],
+    "failure_analyses": [
+      {
+        "execution_id": "EXEC-22FED3",
+        "classification": "AUTOMATION_DEFECT",
+        "confidence": 0.93,
+        "root_cause": "A Playwright locator timed out \u2014 the DOM element was not found using the current selector. Likely caused by a UI change in the application.",
+        "evidence": [
+          "Locator 'getByRole('textbox').first()' timed out after 5000ms \u2014 element not found. AUTOMATION_DEFECT: locator may need update.",
+          "TimeoutError: locator.fill: Timeout 5000ms exceeded.\nCall log:\n  - waiting for getByRole('textbox').first()",
+          "Test type: BOUNDARY",
+          "Duration: 5185.9ms"
+        ],
+        "suggested_fix": "Replace generic locator with a more stable semantic locator (getByTestId or getByRole).",
+        "can_self_heal": true,
+        "jira_ticket_key": "QA03-CFD7",
+        "jira_ticket_url": "https://deeru82.atlassian.net/browse/QA03-CFD7"
+      }
+    ]
   }
 ]

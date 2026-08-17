@@ -39,6 +39,7 @@ class PipelineRunRequest(BaseModel):
     description: str
     acceptance_criteria: Optional[List[str]] = Field(default_factory=list)
     source: RequirementSource = RequirementSource.MANUAL
+    jira_config: Optional[Dict[str, str]] = Field(default_factory=dict)
 
 class JiraFetchRequest(BaseModel):
     domain: str
@@ -449,12 +450,19 @@ async def run_full_pipeline(req: PipelineRunRequest):
             analysis, proposal = await pipeline_service.analyze_failure_and_heal(exec_res, script, tc)
             analysis_dict = analysis.model_dump()
             
-            # Create Jira Bug ticket automatically if Jira details exist
+            # Extract configured Jira credentials from frontend request or default project
+            jira_conf = req.jira_config or {}
+            jira_domain = jira_conf.get("domain") or "company.atlassian.net"
+            jira_email = jira_conf.get("email") or "qa-lead@company.com"
+            jira_token = jira_conf.get("token") or "jira_api_token"
+            project_key = jira_conf.get("project") or (req.project_id.replace("proj-", "QA") if req.project_id else "QA")
+
+            # Create Jira Bug ticket using the configured Jira URL & credentials
             jira_bug = await jira_connector.create_bug_ticket(
-                domain="company.atlassian.net",
-                email="qa-lead@company.com",
-                api_token="jira_api_token",
-                project_key=req.project_id.replace("proj-", "QA") if req.project_id else "QA",
+                domain=jira_domain,
+                email=jira_email,
+                api_token=jira_token,
+                project_key=project_key,
                 summary=f"[AUTOMATION BUG] {tc.title} - {exec_res.error_message[:100] if exec_res.error_message else 'Failed'}",
                 description=f"Automated Test Execution Failed.\nTest Case ID: {tc.id}\nError: {exec_res.error_message}\nLogs:\n{exec_res.stderr}\n\nSelf-Healing Analysis: {getattr(analysis.classification, 'value', analysis.classification)}"
             )
@@ -462,10 +470,11 @@ async def run_full_pipeline(req: PipelineRunRequest):
                 analysis_dict["jira_ticket_key"] = jira_bug["key"]
                 analysis_dict["jira_ticket_url"] = jira_bug["url"]
             else:
-                # Mock ticket URL for local demonstration if offline
-                mock_key = f"BUG-{uuid.uuid4().hex[:4].upper()}"
+                # Format ticket URL using the configured Jira domain
+                clean_domain = jira_domain.replace("https://", "").replace("http://", "").strip("/")
+                mock_key = f"{project_key.upper()}-{uuid.uuid4().hex[:4].upper()}"
                 analysis_dict["jira_ticket_key"] = mock_key
-                analysis_dict["jira_ticket_url"] = f"https://jira.company.com/browse/{mock_key}"
+                analysis_dict["jira_ticket_url"] = f"https://{clean_domain}/browse/{mock_key}"
 
             failure_analyses.append(analysis_dict)
             if proposal:

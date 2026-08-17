@@ -71,6 +71,10 @@ const DEFAULT_SETTINGS: AppSettings = {
 function uid() { return Math.random().toString(36).slice(2, 10); }
 function ts(d: Date) { return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
 
+const API_BASE_URL = typeof window !== 'undefined' && window.location.hostname === 'localhost'
+  ? 'http://localhost:8000'
+  : '';
+
 const STEP_LABELS: Record<PipelineStep, string> = {
   doc_parse: '📄 Document Parsing', req_quality: '① Requirement Quality Gate',
   acceptance_criteria: '② Acceptance Criteria', test_design: '③ Test Design Agent',
@@ -363,7 +367,7 @@ function SettingsPage({ settings, onSave }: { settings: AppSettings; onSave: (s:
     setTestingJira(true);
     setJiraTestResult(null);
     try {
-      const res = await fetch('http://localhost:8000/api/connectors/jira/fetch', {
+      const res = await fetch(`${API_BASE_URL}/api/connectors/jira/fetch`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           domain: local.jira.domain, email: local.jira.email, api_token: local.jira.token,
@@ -670,7 +674,7 @@ function SettingsPage({ settings, onSave }: { settings: AppSettings; onSave: (s:
                         const mcpKey = mcp.id || `mcp-${idx}`;
                         setMcpTestStatuses(prev => ({ ...prev, [mcpKey]: { loading: true } }));
                         try {
-                          const res = await fetch('http://localhost:8000/api/mcp/test-connection', {
+                          const res = await fetch(`${API_BASE_URL}/api/mcp/test-connection`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(mcp)
@@ -1003,7 +1007,7 @@ export function App() {
   // Fetch projects from backend
   const fetchProjects = useCallback(async () => {
     try {
-      const res = await fetch('http://localhost:8000/api/projects');
+      const res = await fetch(`${API_BASE_URL}/api/projects`);
       if (res.ok) {
         const data = await res.json();
         if (data.projects && data.projects.length > 0) {
@@ -1039,14 +1043,20 @@ export function App() {
     setLoading(true);
     const thinkId = addMsg({ role: 'assistant', content: `Analyzing: "${reqData.title.slice(0, 70)}…"`, status: 'running' });
     try {
-      const res = await fetch('http://localhost:8000/api/pipeline/run-full', {
+      const res = await fetch(`${API_BASE_URL}/api/pipeline/run-full`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           project_id: selectedProjectId,
           title: reqData.title,
           description: reqData.description,
           acceptance_criteria: reqData.acceptance_criteria ?? [],
-          source: reqData.source ?? 'manual'
+          source: reqData.source ?? 'manual',
+          jira_config: {
+            domain: settings.jira.domain,
+            email: settings.jira.email,
+            token: settings.jira.token,
+            project: settings.jira.project
+          }
         })
       });
       const data = await res.json();
@@ -1110,7 +1120,7 @@ export function App() {
     setFetchedJiraIssue(null);
     addMsg({ role: 'system', content: `Fetching Jira issue ${key}…` });
     try {
-      const res = await fetch('http://localhost:8000/api/connectors/jira/fetch', {
+      const res = await fetch(`${API_BASE_URL}/api/connectors/jira/fetch`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ domain: settings.jira.domain, email: settings.jira.email, api_token: settings.jira.token, issue_key: key })
       });
@@ -1159,7 +1169,7 @@ export function App() {
       form.append('file', file);
       form.append('project_id', selectedProjectId);
       addMsg({ role: 'system', content: `Running full pipeline for project ${selectedProject?.name || selectedProjectId}…` });
-      const res = await fetch('http://localhost:8000/api/pipeline/from-document', { method: 'POST', body: form });
+      const res = await fetch(`${API_BASE_URL}/api/pipeline/from-document`, { method: 'POST', body: form });
       if (!res.ok) throw new Error(`Backend error ${res.status}`);
       const data = await res.json();
       setPipelineData(data);
@@ -1342,7 +1352,7 @@ export function App() {
             <button
               onClick={async () => {
                 try {
-                  const res = await fetch('http://localhost:8000/api/reports/download-html', {
+                  const res = await fetch(`${API_BASE_URL}/api/reports/download-html`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'text/html' },
                     body: JSON.stringify(pipelineData || {})
